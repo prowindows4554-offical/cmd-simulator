@@ -8,7 +8,8 @@
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 
-🌐 Language: **English** · [Français](docs/README.fr.md) · [Português](docs/README.pt.md) · [Қазақша](docs/README.kk.md) · [Русский](docs/README.ru.md)
+🌐 Language: **English** · [Français](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.fr.md) · [Português](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.pt.md) · [Қазақша](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.kk.md) · [Русский](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.ru.md)
+
 
 **A realistic Windows Command Prompt (cmd.exe) simulator running directly in your browser**
 
