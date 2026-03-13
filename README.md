@@ -182,6 +182,12 @@ Contributions are welcome! Here’s how:
 
 -----
 
+## 📋 Changelog
+
+See [CHANGELOG](CHANGELOG.md) for version history.
+
+-----
+
 ## 📄 License
 
 Distributed under the **MIT License**. See <LICENSE> for details.
