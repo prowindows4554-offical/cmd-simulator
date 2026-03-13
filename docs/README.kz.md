@@ -1,6 +1,6 @@
 <div align="center">
 
-🌐 Тіл: [English](../README.md) · [Français](README.fr.md) · [Português](README.pt.md) · **Қазақша** · [Русский](README.ru.md)
+🌐 Тіл: [English](https://github.com/prowindows4554-offical/cmd-simulator?tab=readme-ov-file)  · [Français](README.fr.md) · [Português](README.pt.md) · **Қазақша** · [Русский](README.ru.md)
 
 # 💻 Windows CMD Симуляторы
 
