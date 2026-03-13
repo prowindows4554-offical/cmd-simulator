@@ -8,7 +8,7 @@
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 
-🌐 Idioma: [English](../README.md) · [Français](README.fr.md) · **Português** · [Қазақша](README.kk.md) · [Русский](README.ru.md)
+🌐 Idioma: [English](https://github.com/prowindows4554-offical/cmd-simulator?tab=readme-ov-file) · [Français](README.fr.md) · **Português** · [Қазақша](README.kk.md) · [Русский](README.ru.md)
 
 **Um simulador realista do Prompt de Comando do Windows (cmd.exe) diretamente no seu navegador**
 
