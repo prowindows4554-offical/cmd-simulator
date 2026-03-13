@@ -15,8 +15,6 @@
 
 [🚀 Live Demo](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Report a Bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [✨ Request a Feature](https://github.com/prowindows4554-offical/cmd-simulator/issues)
 
-🌐 **Language / Язык:**
-🇬🇧 [English](README.md) · 🇷🇺 [Русский](README.ru.md) · 🇫🇷 [Français](README.fr.md) · 🇧🇷 [Português](README.pt.md) · 🇰🇿 [Қазақша](docs/README.kk.md)
 
 </div>
 
