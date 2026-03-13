@@ -101,11 +101,169 @@ font-family: ‘Segoe UI’, Tahoma, sans-serif;
 padding: 2px 8px;
 cursor: default;
 user-select: none;
+position: relative;
 }
 
-.menu-item:hover {
+.menu-item:hover, .menu-item.active {
 background: #1a1a1a;
 }
+
+.dropdown {
+display: none;
+position: absolute;
+top: 100%;
+left: 0;
+background: #2d2d2d;
+border: 1px solid #555;
+min-width: 180px;
+z-index: 1000;
+box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+}
+
+.menu-item.active .dropdown {
+display: block;
+}
+
+.dropdown-item {
+color: #c0c0c0;
+font-size: 11px;
+font-family: ‘Segoe UI’, Tahoma, sans-serif;
+padding: 5px 20px 5px 24px;
+cursor: default;
+user-select: none;
+white-space: nowrap;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+}
+
+.dropdown-item:hover {
+background: #0078d7;
+color: #fff;
+}
+
+.dropdown-separator {
+height: 1px;
+background: #555;
+margin: 3px 2px;
+}
+
+.dropdown-item.disabled {
+color: #666;
+pointer-events: none;
+}
+
+/* About window */
+.about-overlay {
+display: none;
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+z-index: 9999;
+}
+
+.about-overlay.visible { display: block; }
+
+.about-window {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 420px;
+background: #f0f0f0;
+border: 1px solid #999;
+box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+font-family: ‘Segoe UI’, Tahoma, sans-serif;
+}
+
+.about-titlebar {
+background: linear-gradient(to bottom, #0a3a6e, #073060);
+height: 28px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 4px 0 8px;
+user-select: none;
+cursor: default;
+}
+
+.about-titlebar-title {
+color: #fff;
+font-size: 12px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.about-close {
+width: 21px;
+height: 21px;
+background: #c75050;
+color: #fff;
+border: 1px solid #a33;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 11px;
+cursor: pointer;
+}
+
+.about-close:hover { background: #e74c3c; }
+
+.about-body {
+padding: 20px 24px 10px;
+display: flex;
+gap: 16px;
+align-items: flex-start;
+}
+
+.about-icon {
+flex-shrink: 0;
+}
+
+.about-text h2 {
+font-size: 14px;
+font-weight: bold;
+color: #000;
+margin-bottom: 8px;
+}
+
+.about-text p {
+font-size: 12px;
+color: #333;
+margin-bottom: 3px;
+line-height: 1.5;
+}
+
+.about-divider {
+border: none;
+border-top: 1px solid #aaa;
+margin: 10px 0;
+}
+
+.about-license {
+font-size: 11px;
+color: #555;
+}
+
+.about-footer {
+padding: 8px 24px 16px;
+display: flex;
+justify-content: center;
+}
+
+.about-ok-btn {
+background: #e1e1e1;
+border: 1px solid #aaa;
+padding: 4px 40px;
+font-size: 12px;
+font-family: ‘Segoe UI’, Tahoma, sans-serif;
+cursor: pointer;
+color: #000;
+}
+
+.about-ok-btn:hover { background: #cce4f7; border-color: #0078d7; }
+.about-ok-btn:active { background: #b8d8f0; }
 
 .terminal {
 flex: 1;
@@ -196,11 +354,89 @@ margin-left: 1px;
       <div class="tb-btn close" title="Close" onclick="closeWindow()">&#10005;</div>
     </div>
   </div>
-  <div class="menubar">
-    <div class="menu-item">File</div>
-    <div class="menu-item">Edit</div>
-    <div class="menu-item">View</div>
-    <div class="menu-item">Help</div>
+  <div class="menubar" id="menubar">
+    <div class="menu-item" id="menu-file" onclick="toggleMenu('menu-file')">File
+      <div class="dropdown">
+        <div class="dropdown-item disabled">New Tab</div>
+        <div class="dropdown-item disabled">Open...</div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item disabled">Save As...</div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item" onclick="closeWindow()">Exit</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-edit" onclick="toggleMenu('menu-edit')">Edit
+      <div class="dropdown">
+        <div class="dropdown-item disabled">Cut</div>
+        <div class="dropdown-item disabled">Copy</div>
+        <div class="dropdown-item disabled">Paste</div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item" onclick="output.innerHTML=''; closeAllMenus()">Clear Screen</div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item disabled">Select All</div>
+        <div class="dropdown-item disabled">Find...</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-view" onclick="toggleMenu('menu-view')">View
+      <div class="dropdown">
+        <div class="dropdown-item" onclick="cmdColorFromMenu('0A'); closeAllMenus()">Green on Black (Matrix)</div>
+        <div class="dropdown-item" onclick="cmdColorFromMenu('07'); closeAllMenus()">Gray on Black (Default)</div>
+        <div class="dropdown-item" onclick="cmdColorFromMenu('1F'); closeAllMenus()">White on Blue</div>
+        <div class="dropdown-item" onclick="cmdColorFromMenu('F0'); closeAllMenus()">Black on White</div>
+        <div class="dropdown-separator"></div>
+        <div class="dropdown-item" onclick="toggleMaximize(); closeAllMenus()">Full Screen</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-github" onclick="openGitHub()">GitHub</div>
+    <div class="menu-item" id="menu-help" onclick="toggleMenu('menu-help')">Help
+      <div class="dropdown">
+        <div class="dropdown-item" onclick="showAbout()">About Command Prompt...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- About window -->
+
+  <div class="about-overlay" id="about-overlay" onclick="handleOverlayClick(event)">
+    <div class="about-window" id="about-window">
+      <div class="about-titlebar">
+        <div class="about-titlebar-title">
+          <svg width="14" height="14" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="1" fill="#000" stroke="#555"/><text x="2" y="12" font-size="10" fill="#c0c0c0" font-family="Consolas">C:\</text></svg>
+          About Command Prompt
+        </div>
+        <div class="about-close" onclick="closeAbout()">✕</div>
+      </div>
+      <div class="about-body">
+        <div class="about-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48">
+            <rect width="48" height="48" rx="4" fill="#000"/>
+            <rect x="4" y="4" width="40" height="40" rx="2" fill="#0a1a0a"/>
+            <text x="6" y="22" font-size="11" fill="#00c000" font-family="Consolas">C:\&gt;_</text>
+            <text x="6" y="34" font-size="9" fill="#008000" font-family="Consolas">cmd.exe</text>
+          </svg>
+        </div>
+        <div class="about-text">
+          <h2>Windows CMD Simulator</h2>
+          <p><b>Version 1.0.0</b></p>
+          <p>Microsoft Windows [Version 10.0.19045.3930]</p>
+          <hr class="about-divider">
+          <p>Built with pure HTML, CSS &amp; JavaScript.</p>
+          <p>No frameworks. No dependencies.</p>
+          <hr class="about-divider">
+          <p class="about-license">© 2026 ProWin Team. MIT License.</p>
+          <p class="about-license">
+            <a href="https://github.com/prowindows4554-offical/cmd-simulator"
+               target="_blank"
+               style="color:#0066cc;font-size:11px;">
+              github.com/prowindows4554-offical/cmd-simulator
+            </a>
+          </p>
+        </div>
+      </div>
+      <div class="about-footer">
+        <button class="about-ok-btn" onclick="closeAbout()">OK</button>
+      </div>
+    </div>
   </div>
   <div class="terminal" id="terminal" onclick="focusInput()">
     <div id="output"></div>
@@ -1193,6 +1429,66 @@ document.addEventListener('mouseup', () => {
   dragging = false;
   document.body.style.userSelect = '';
 });
+
+// Menu functions
+function toggleMenu(id) {
+  const items = document.querySelectorAll('.menu-item');
+  items.forEach(item => {
+    if (item.id === id) {
+      item.classList.toggle('active');
+    } else {
+      item.classList.remove('active');
+    }
+  });
+  focusInput();
+}
+
+function closeAllMenus() {
+  document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.menu-item')) {
+    closeAllMenus();
+  }
+});
+
+function openGitHub() {
+  window.open('https://github.com/prowindows4554-offical/cmd-simulator', '_blank');
+  closeAllMenus();
+}
+
+function cmdColorFromMenu(code) {
+  const colorMap = {
+    '0':'#000','1':'#000080','2':'#008000','3':'#008080',
+    '4':'#800000','5':'#800080','6':'#808000','7':'#c0c0c0',
+    '8':'#808080','9':'#0000ff','a':'#00ff00','b':'#00ffff',
+    'c':'#ff0000','d':'#ff00ff','e':'#ffff00','f':'#ffffff'
+  };
+  const bg = colorMap[code[0].toLowerCase()];
+  const fg = colorMap[code[1].toLowerCase()];
+  if (bg && fg) {
+    terminal.style.background = bg;
+    terminal.style.color = fg;
+    cmdInput.style.color = fg;
+    promptEl.style.color = fg;
+    document.querySelectorAll('.output-line').forEach(el => el.style.color = fg);
+  }
+}
+
+function showAbout() {
+  document.getElementById('about-overlay').classList.add('visible');
+  closeAllMenus();
+}
+
+function closeAbout() {
+  document.getElementById('about-overlay').classList.remove('visible');
+  focusInput();
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('about-overlay')) closeAbout();
+}
 
 init();
 </script>
