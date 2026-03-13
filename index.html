@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command Prompt</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: #000;
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+font-family: ‘Consolas’, ‘Courier New’, monospace;
+}
+
+.window {
+width: 800px;
+height: 520px;
+background: #000;
+border: 1px solid #888;
+display: flex;
+flex-direction: column;
+box-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+resize: both;
+overflow: hidden;
+min-width: 400px;
+min-height: 200px;
+}
+
+.titlebar {
+background: linear-gradient(to bottom, #0a3a6e, #073060);
+height: 28px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 4px 0 8px;
+flex-shrink: 0;
+cursor: default;
+user-select: none;
+}
+
+.titlebar-left {
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.titlebar-icon {
+width: 16px;
+height: 16px;
+}
+
+.titlebar-icon svg {
+width: 100%;
+height: 100%;
+}
+
+.titlebar-title {
+color: #fff;
+font-size: 12px;
+font-family: ‘Segoe UI’, Tahoma, sans-serif;
+}
+
+.titlebar-buttons {
+display: flex;
+height: 100%;
+}
+
+.tb-btn {
+width: 46px;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #fff;
+font-size: 10px;
+cursor: pointer;
+font-family: ‘Segoe UI’, Tahoma, sans-serif;
+}
+
+.tb-btn:hover { background: rgba(255,255,255,0.15); }
+.tb-btn.close:hover { background: #e81123; }
+
+.menubar {
+background: #000;
+border-bottom: 1px solid #333;
+padding: 2px 4px;
+display: flex;
+gap: 2px;
+flex-shrink: 0;
+}
+
+.menu-item {
+color: #c0c0c0;
+font-size: 11px;
+font-family: ‘Segoe UI’, Tahoma, sans-serif;
+padding: 2px 8px;
+cursor: default;
+user-select: none;
+}
+
+.menu-item:hover {
+background: #1a1a1a;
+}
+
+.terminal {
+flex: 1;
+overflow-y: auto;
+overflow-x: hidden;
+padding: 4px;
+background: #000;
+cursor: text;
+color: #c0c0c0;
+font-size: 14px;
+line-height: 1.3;
+}
+
+.terminal::-webkit-scrollbar { width: 12px; }
+.terminal::-webkit-scrollbar-track { background: #1a1a1a; }
+.terminal::-webkit-scrollbar-thumb { background: #555; border: 2px solid #1a1a1a; }
+
+.output-line {
+white-space: pre-wrap;
+word-break: break-all;
+color: #c0c0c0;
+}
+
+.output-line.error { color: #ff6b6b; }
+.output-line.system { color: #c0c0c0; }
+
+.input-line {
+display: flex;
+align-items: flex-start;
+}
+
+.prompt {
+color: #c0c0c0;
+white-space: nowrap;
+flex-shrink: 0;
+}
+
+.input-area {
+flex: 1;
+position: relative;
+display: inline-block;
+}
+
+#cmd-input {
+background: transparent;
+border: none;
+outline: none;
+color: #c0c0c0;
+font-family: ‘Consolas’, ‘Courier New’, monospace;
+font-size: 14px;
+line-height: 1.3;
+width: 100%;
+caret-color: #c0c0c0;
+}
+
+.blink-cursor {
+display: inline-block;
+width: 8px;
+height: 14px;
+background: #c0c0c0;
+animation: blink 1s step-end infinite;
+vertical-align: text-bottom;
+margin-left: 1px;
+}
+
+@keyframes blink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0; }
+}
+</style>
+
+</head>
+<body>
+<div class="window" id="window">
+  <div class="titlebar" id="titlebar">
+    <div class="titlebar-left">
+      <div class="titlebar-icon">
+        <svg viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="1" width="14" height="14" rx="1" fill="#000" stroke="#555"/>
+          <text x="2" y="12" font-size="10" fill="#c0c0c0" font-family="Consolas">C:\</text>
+        </svg>
+      </div>
+      <span class="titlebar-title">Command Prompt</span>
+    </div>
+    <div class="titlebar-buttons">
+      <div class="tb-btn" title="Minimize" onclick="minimizeWindow()">&#8722;</div>
+      <div class="tb-btn" title="Maximize" onclick="toggleMaximize()">&#9633;</div>
+      <div class="tb-btn close" title="Close" onclick="closeWindow()">&#10005;</div>
+    </div>
+  </div>
+  <div class="menubar">
+    <div class="menu-item">File</div>
+    <div class="menu-item">Edit</div>
+    <div class="menu-item">View</div>
+    <div class="menu-item">Help</div>
+  </div>
+  <div class="terminal" id="terminal" onclick="focusInput()">
+    <div id="output"></div>
+    <div class="input-line" id="input-line">
+      <span class="prompt" id="prompt">C:\Users\User&gt;</span>
+      <div class="input-area">
+        <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const terminal = document.getElementById('terminal');
+const output = document.getElementById('output');
+const cmdInput = document.getElementById('cmd-input');
+const promptEl = document.getElementById('prompt');
+const win = document.getElementById('window');
+const titlebar = document.getElementById('titlebar');
+
+let currentDir = 'C:\\Users\\User';
+let history = [];
+let historyIndex = -1;
+let isMaximized = false;
+let originalStyle = {};
+
+const fileSystem = {
+  'C:': {
+    type: 'dir',
+    children: {
+      'Users': {
+        type: 'dir',
+        children: {
+          'User': {
+            type: 'dir',
+            children: {
+              'Desktop': { type: 'dir', children: {
+                'readme.txt': { type: 'file', content: 'Welcome to Windows CMD Simulator!\r\nType "help" for available commands.', size: 64, date: '01/01/2024  12:00 PM' }
+              }},
+              'Documents': { type: 'dir', children: {
+                'notes.txt': { type: 'file', content: 'Some important notes here.\r\nLine 2.\r\nLine 3.', size: 44, date: '01/01/2024  12:00 PM' }
+              }},
+              'Downloads': { type: 'dir', children: {} },
+              'AppData': { type: 'dir', children: {
+                'Local': { type: 'dir', children: {} },
+                'Roaming': { type: 'dir', children: {} }
+              }}
+            }
+          },
+          'Public': { type: 'dir', children: {} }
+        }
+      },
+      'Windows': {
+        type: 'dir',
+        children: {
+          'System32': { type: 'dir', children: {
+            'cmd.exe': { type: 'file', content: '', size: 289792, date: '01/01/2024  12:00 PM' },
+            'notepad.exe': { type: 'file', content: '', size: 201728, date: '01/01/2024  12:00 PM' }
+          }},
+          'SysWOW64': { type: 'dir', children: {} }
+        }
+      },
+      'Program Files': { type: 'dir', children: {} },
+      'Program Files (x86)': { type: 'dir', children: {} }
+    }
+  }
+};
+
+const createdFiles = {};
+
+function getNode(path) {
+  if (createdFiles[path]) return createdFiles[path];
+  const parts = normalizePath(path).replace(/\\/g, '/').split('/').filter(Boolean);
+  let node = fileSystem;
+  for (const part of parts) {
+    if (!node[part] && !node.children?.[part]) return null;
+    node = node[part] || node.children[part];
+    if (node.children !== undefined) {
+      // keep going
+    }
+  }
+  return node;
+}
+
+function normalizePath(p) {
+  if (!p) return currentDir;
+  p = p.trim();
+  if (/^[A-Za-z]:/.test(p)) return p;
+  if (p.startsWith('\\')) return currentDir.substring(0,2) + p;
+  if (p === '..') {
+    const parts = currentDir.split('\\');
+    if (parts.length > 1) parts.pop();
+    return parts.join('\\');
+  }
+  if (p === '.') return currentDir;
+  const parts = p.split('\\');
+  let resolved = currentDir;
+  for (const part of parts) {
+    if (part === '..') {
+      const rparts = resolved.split('\\');
+      if (rparts.length > 1) rparts.pop();
+      resolved = rparts.join('\\');
+    } else if (part !== '.') {
+      resolved = resolved + '\\' + part;
+    }
+  }
+  return resolved;
+}
+
+function getDirNode(path) {
+  const norm = normalizePath(path || currentDir);
+  const parts = norm.split('\\').filter(Boolean);
+  
+  // handle drive root
+  const drivePart = parts[0]; // e.g. "C:"
+  let node = fileSystem[drivePart];
+  if (!node) return null;
+
+  for (let i = 1; i < parts.length; i++) {
+    if (!node.children || !node.children[parts[i]]) {
+      // check createdFiles
+      const subpath = parts.slice(0,i+1).join('\\');
+      if (createdFiles[subpath]) { node = createdFiles[subpath]; continue; }
+      return null;
+    }
+    node = node.children[parts[i]];
+  }
+  return node;
+}
+
+function print(text, cls = '') {
+  const line = document.createElement('div');
+  line.className = 'output-line' + (cls ? ' ' + cls : '');
+  line.textContent = text;
+  output.appendChild(line);
+}
+
+function printHTML(html) {
+  const line = document.createElement('div');
+  line.className = 'output-line';
+  line.innerHTML = html;
+  output.appendChild(line);
+}
+
+function printBlank() { print(''); }
+
+function updatePrompt() {
+  promptEl.textContent = currentDir + '>';
+}
+
+const now = new Date();
+const bootDate = now.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+
+function init() {
+  print('Microsoft Windows [Version 10.0.19045.3930]');
+  print('(c) Microsoft Corporation. All rights reserved.');
+  printBlank();
+  updatePrompt();
+  focusInput();
+}
+
+function focusInput() {
+  cmdInput.focus();
+}
+
+cmdInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const cmd = cmdInput.value;
+    const promptText = promptEl.textContent;
+    
+    // Echo the command
+    const echoLine = document.createElement('div');
+    echoLine.className = 'output-line';
+    echoLine.textContent = promptText + cmd;
+    output.appendChild(echoLine);
+
+    if (cmd.trim()) {
+      history.unshift(cmd);
+      historyIndex = -1;
+    }
+
+    cmdInput.value = '';
+    processCommand(cmd.trim());
+    updatePrompt();
+    scrollToBottom();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIndex < history.length - 1) {
+      historyIndex++;
+      cmdInput.value = history[historyIndex];
+    }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIndex > 0) {
+      historyIndex--;
+      cmdInput.value = history[historyIndex];
+    } else {
+      historyIndex = -1;
+      cmdInput.value = '';
+    }
+  } else if (e.key === 'Tab') {
+    e.preventDefault();
+    autocomplete();
+  }
+});
+
+function autocomplete() {
+  const val = cmdInput.value;
+  const parts = val.split(' ');
+  const partial = parts[parts.length - 1];
+  if (!partial) return;
+
+  const node = getDirNode(currentDir);
+  if (!node || !node.children) return;
+
+  const matches = Object.keys(node.children).filter(k => k.toLowerCase().startsWith(partial.toLowerCase()));
+  if (matches.length === 1) {
+    parts[parts.length - 1] = matches[0];
+    cmdInput.value = parts.join(' ');
+  }
+}
+
+function scrollToBottom() {
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function processCommand(input) {
+  if (!input) { printBlank(); return; }
+
+  const parts = parseArgs(input);
+  const cmd = parts[0].toLowerCase();
+  const args = parts.slice(1);
+  const raw = input.substring(cmd.length).trim();
+
+  switch(cmd) {
+    case 'help': cmdHelp(); break;
+    case 'cls': case 'clear': output.innerHTML = ''; break;
+    case 'dir': cmdDir(args); break;
+    case 'cd': case 'chdir': cmdCd(raw); break;
+    case 'echo': cmdEcho(raw); break;
+    case 'type': cmdType(args); break;
+    case 'mkdir': case 'md': cmdMkdir(args); break;
+    case 'rmdir': case 'rd': cmdRmdir(args); break;
+    case 'del': case 'erase': cmdDel(args); break;
+    case 'copy': cmdCopy(args); break;
+    case 'move': cmdMove(args); break;
+    case 'ren': case 'rename': cmdRen(args); break;
+    case 'ver': cmdVer(); break;
+    case 'date': cmdDate(); break;
+    case 'time': cmdTime(); break;
+    case 'whoami': print(currentDir.includes('User') ? 'DESKTOP-PC\\User' : 'SYSTEM'); break;
+    case 'hostname': print('DESKTOP-PC'); break;
+    case 'set': cmdSet(raw); break;
+    case 'path': print(envVars['PATH']); break;
+    case 'color': cmdColor(args); break;
+    case 'title': cmdTitle(raw); break;
+    case 'prompt': cmdPrompt(raw); break;
+    case 'pause': print('Press any key to continue . . .'); break;
+    case 'exit': closeWindow(); break;
+    case 'ping': cmdPing(args); break;
+    case 'ipconfig': cmdIpconfig(); break;
+    case 'systeminfo': cmdSysteminfo(); break;
+    case 'tasklist': cmdTasklist(); break;
+    case 'netstat': cmdNetstat(); break;
+    case 'tree': cmdTree(args); break;
+    case 'attrib': print(''); break;
+    case 'find': cmdFind(args, raw); break;
+    case 'more': print('--- More ---'); break;
+    case 'sort': print(''); break;
+    case 'fc': print('Comparing files...'); break;
+    case 'xcopy': print('0 File(s) copied'); break;
+    case 'format': print("The type of the file system is NTFS.\r\nWARNING, ALL DATA ON NON-REMOVABLE DISK\r\nDRIVE C: WILL BE LOST!\r\nProceed with Format (Y/N)?"); break;
+    case 'chkdsk': cmdChkdsk(); break;
+    case 'sfc': print('Beginning system scan.  This process will take some time.\r\n\r\nBeginning verification phase of system scan.\r\nVerification 100% complete.\r\n\r\nWindows Resource Protection did not find any integrity violations.'); break;
+    case 'diskpart': print("Microsoft DiskPart version 10.0.19041.964\r\nCopyright (C) Microsoft Corporation.\r\nOn computer: DESKTOP-PC"); break;
+    case 'shutdown': cmdShutdown(args); break;
+    case 'powercfg': print('Power configuration updated.'); break;
+    case 'regedit': print("'regedit' is not recognized as an internal or external command,\r\noperable program or batch file."); break;
+    case 'calc': print("'calc' is not recognized as an internal or external command."); break;
+    case 'notepad': print("Starting Notepad..."); break;
+    case 'start': print(''); break;
+    case 'runas': print("Attempting to start as different user..."); break;
+    case 'assoc': print('.exe=exefile\r\n.txt=txtfile\r\n.bat=batfile\r\n.cmd=cmdfile'); break;
+    case 'ftype': print('exefile="%1" %*\r\ntxtfile=%SystemRoot%\\system32\\NOTEPAD.EXE %1'); break;
+    case 'where': cmdWhere(args); break;
+    case 'if': print(''); break;
+    case 'for': print(''); break;
+    case 'goto': print(''); break;
+    case 'call': print(''); break;
+    case 'rem': break; // comment
+    case 'mode': print('Status for device CON:\r\n-----------------------\r\n    Lines:          300\r\n    Columns:        120\r\n    Keyboard rate:  31\r\n    Keyboard delay: 1\r\n    Code page:      437'); break;
+    case 'vol': print('Volume in drive C is Windows\r\nVolume Serial Number is B4D7-9F3A'); break;
+    case 'label': print(''); break;
+    case 'subst': print(''); break;
+    case 'net': cmdNet(args); break;
+    case 'nslookup': cmdNslookup(args); break;
+    case 'tracert': cmdTracert(args); break;
+    case 'arp': print('Interface: 192.168.1.100 --- 0x3\r\n  Internet Address      Physical Address      Type\r\n  192.168.1.1           00-11-22-33-44-55     dynamic'); break;
+    case 'netsh': print('The following commands are available:\r\n\r\nCommands in this context:\r\nadvfirewall - Changes to the `netsh advfirewall\' context.\r\nbridge      - Changes to the `netsh bridge\' context.\r\ndhcpclient  - Changes to the `netsh dhcpclient\' context.'); break;
+    case 'sc': print('DESCRIPTION:\r\n        SC is a command line program used for communicating with the\r\n        Service Control Manager and services.'); break;
+    case 'wmic': print('wmic:root\\cli>'); break;
+    case 'powershell': print("Windows PowerShell\r\nCopyright (C) Microsoft Corporation. All rights reserved.\r\n\r\nTry the new cross-platform PowerShell https://aka.ms/pscore6"); break;
+    case 'cmd': print('Microsoft Windows [Version 10.0.19045.3930]\r\n(c) Microsoft Corporation. All rights reserved.'); break;
+    default:
+      print(`'${parts[0]}' is not recognized as an internal or external command,`);
+      print('operable program or batch file.');
+  }
+  printBlank();
+}
+
+const envVars = {
+  'COMPUTERNAME': 'DESKTOP-PC',
+  'USERNAME': 'User',
+  'USERPROFILE': 'C:\\Users\\User',
+  'APPDATA': 'C:\\Users\\User\\AppData\\Roaming',
+  'TEMP': 'C:\\Users\\User\\AppData\\Local\\Temp',
+  'TMP': 'C:\\Users\\User\\AppData\\Local\\Temp',
+  'SYSTEMROOT': 'C:\\Windows',
+  'WINDIR': 'C:\\Windows',
+  'SYSTEMDRIVE': 'C:',
+  'HOMEDRIVE': 'C:',
+  'HOMEPATH': '\\Users\\User',
+  'PATH': 'C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem',
+  'PROCESSOR_ARCHITECTURE': 'AMD64',
+  'NUMBER_OF_PROCESSORS': '8',
+  'OS': 'Windows_NT',
+  'PATHEXT': '.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC',
+  'PROMPT': '$P$G'
+};
+
+function parseArgs(input) {
+  const args = [];
+  let current = '';
+  let inQuote = false;
+  for (let i = 0; i < input.length; i++) {
+    if (input[i] === '"') { inQuote = !inQuote; continue; }
+    if (input[i] === ' ' && !inQuote) {
+      if (current) { args.push(current); current = ''; }
+    } else {
+      current += input[i];
+    }
+  }
+  if (current) args.push(current);
+  return args;
+}
+
+function cmdHelp() {
+  print('For more information on a specific command, type HELP command-name');
+  printBlank();
+  const cmds = [
+    ['ASSOC', 'Displays or modifies file extension associations.'],
+    ['ATTRIB', 'Displays or changes file attributes.'],
+    ['CALL', 'Calls one batch program from another.'],
+    ['CD', 'Displays the name of or changes the current directory.'],
+    ['CHKDSK', 'Checks a disk and displays a status report.'],
+    ['CLS', 'Clears the screen.'],
+    ['COPY', 'Copies one or more files to another location.'],
+    ['DATE', 'Displays or sets the date.'],
+    ['DEL', 'Deletes one or more files.'],
+    ['DIR', 'Displays a list of files and subdirectories in a directory.'],
+    ['DISKPART', 'Displays or configures Disk Partition properties.'],
+    ['ECHO', 'Displays messages, or turns command echoing on or off.'],
+    ['ERASE', 'Deletes one or more files.'],
+    ['EXIT', 'Quits the CMD.EXE program (command interpreter).'],
+    ['FC', 'Compares two files or sets of files, and displays the differences.'],
+    ['FIND', 'Searches for a text string in a file or files.'],
+    ['FOR', 'Runs a specified command for each file in a set of files.'],
+    ['FORMAT', 'Formats a disk for use with Windows.'],
+    ['FTYPE', 'Displays or modifies file types used in file extension associations.'],
+    ['GOTO', 'Directs the Windows command interpreter to a labeled line.'],
+    ['HELP', 'Provides Help information for Windows commands.'],
+    ['HOSTNAME', 'Prints the name of the current host.'],
+    ['IF', 'Performs conditional processing in batch programs.'],
+    ['IPCONFIG', 'Display all current TCP/IP network configuration values.'],
+    ['LABEL', 'Creates, changes, or deletes the volume label of a disk.'],
+    ['MD', 'Creates a directory.'],
+    ['MKDIR', 'Creates a directory.'],
+    ['MODE', 'Configures a system device.'],
+    ['MORE', 'Displays output one screen at a time.'],
+    ['MOVE', 'Moves one or more files from one directory to another.'],
+    ['NET', 'Manages network resources.'],
+    ['NETSTAT', 'Displays active TCP connections.'],
+    ['PATH', 'Displays or sets a search path for executable files.'],
+    ['PAUSE', 'Suspends processing of a batch file.'],
+    ['PING', 'Tests a network connection.'],
+    ['PROMPT', 'Changes the Windows command prompt.'],
+    ['RD', 'Removes a directory.'],
+    ['REM', 'Records comments (remarks) in batch files.'],
+    ['REN', 'Renames a file or files.'],
+    ['RENAME', 'Renames a file or files.'],
+    ['RMDIR', 'Removes a directory.'],
+    ['SET', 'Displays, sets, or removes Windows environment variables.'],
+    ['SFC', 'Scans integrity of all protected system files.'],
+    ['SHUTDOWN', 'Allows proper local or remote shutdown of machine.'],
+    ['SORT', 'Sorts input.'],
+    ['START', 'Starts a separate window to run a specified program or command.'],
+    ['SUBST', 'Associates a path with a drive letter.'],
+    ['SYSTEMINFO', 'Displays machine specific properties and configuration.'],
+    ['TASKLIST', 'Displays all currently running tasks.'],
+    ['TIME', 'Displays or sets the system time.'],
+    ['TITLE', 'Sets the window title for a CMD.EXE session.'],
+    ['TREE', 'Graphically displays the directory structure of a drive or path.'],
+    ['TYPE', 'Displays the contents of a text file.'],
+    ['VER', 'Displays the Windows version.'],
+    ['VOL', 'Displays a disk volume label and serial number.'],
+    ['WHOAMI', 'Displays current user information.'],
+    ['XCOPY', 'Copies files and directory trees.'],
+  ];
+  for (const [name, desc] of cmds) {
+    print(name.padEnd(16) + desc);
+  }
+}
+
+function cmdDir(args) {
+  let targetPath = currentDir;
+  const flags = args.filter(a => a.startsWith('/'));
+  const pathArg = args.find(a => !a.startsWith('/'));
+  if (pathArg) targetPath = normalizePath(pathArg);
+
+  const node = getDirNode(targetPath);
+  if (!node || node.type !== 'dir') {
+    print(`The system cannot find the path specified.`); return;
+  }
+
+  print(` Volume in drive C is Windows`);
+  print(` Volume Serial Number is B4D7-9F3A`);
+  printBlank();
+  print(` Directory of ${targetPath}`);
+  printBlank();
+
+  const children = node.children || {};
+  let fileCount = 0, dirCount = 0, totalSize = 0;
+
+  const dStr = now.toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'});
+  const tStr = now.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'});
+  print(`${dStr}  ${tStr}    <DIR>          .`);
+  print(`${dStr}  ${tStr}    <DIR>          ..`);
+
+  for (const [name, item] of Object.entries(children)) {
+    const date = item.date || `${dStr}  ${tStr}`;
+    if (item.type === 'dir') {
+      print(`${date}    <DIR>          ${name}`);
+      dirCount++;
+    } else {
+      const size = (item.size || 0).toString().padStart(14);
+      print(`${date} ${size} ${name}`);
+      fileCount++;
+      totalSize += item.size || 0;
+    }
+  }
+
+  printBlank();
+  print(`${fileCount.toString().padStart(16)} File(s) ${totalSize.toString().padStart(14)} bytes`);
+  print(`${(dirCount+2).toString().padStart(16)} Dir(s)  ${(128849018880).toLocaleString().padStart(14)} bytes free`);
+}
+
+function cmdCd(arg) {
+  if (!arg || arg === '') {
+    print(currentDir); return;
+  }
+  if (/^[A-Za-z]:$/.test(arg)) {
+    currentDir = arg + '\\';
+    return;
+  }
+  const target = normalizePath(arg);
+  const node = getDirNode(target);
+  if (node && node.type === 'dir') {
+    currentDir = target;
+  } else {
+    print('The system cannot find the path specified.');
+  }
+}
+
+function cmdEcho(raw) {
+  if (!raw) { print('ECHO is on.'); return; }
+  if (raw.toLowerCase() === 'on') { print('ECHO is on.'); return; }
+  if (raw.toLowerCase() === 'off') { print('ECHO is off.'); return; }
+  print(raw);
+}
+
+function cmdType(args) {
+  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  const filePath = normalizePath(args[0]);
+  const parts = filePath.split('\\');
+  const fileName = parts.pop();
+  const dirPath = parts.join('\\');
+  const node = getDirNode(dirPath);
+  if (node && node.children && node.children[fileName]) {
+    const file = node.children[fileName];
+    if (file.type === 'file') {
+      print(file.content || '');
+      return;
+    }
+  }
+  if (createdFiles[filePath]) {
+    print(createdFiles[filePath].content || '');
+    return;
+  }
+  print(`The system cannot find the file specified.`);
+}
+
+function cmdMkdir(args) {
+  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  const dirName = args[0];
+  const target = normalizePath(dirName);
+  const parts = target.split('\\');
+  const name = parts.pop();
+  const parentPath = parts.join('\\');
+  const parent = getDirNode(parentPath);
+  if (!parent) { print('The system cannot find the path specified.'); return; }
+  if (parent.children[name]) { print('A subdirectory or file already exists.'); return; }
+  parent.children[name] = { type: 'dir', children: {} };
+}
+
+function cmdRmdir(args) {
+  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  const target = normalizePath(args[0]);
+  const parts = target.split('\\');
+  const name = parts.pop();
+  const parentPath = parts.join('\\');
+  const parent = getDirNode(parentPath);
+  if (!parent || !parent.children[name]) { print('The system cannot find the file specified.'); return; }
+  const node = parent.children[name];
+  if (node.type !== 'dir') { print('The directory name is invalid.'); return; }
+  if (Object.keys(node.children).length > 0 && !args.includes('/s')) {
+    print('The directory is not empty.'); return;
+  }
+  delete parent.children[name];
+}
+
+function cmdDel(args) {
+  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  const filePath = normalizePath(args[0]);
+  const parts = filePath.split('\\');
+  const fileName = parts.pop();
+  const dirPath = parts.join('\\');
+  const node = getDirNode(dirPath);
+  if (node && node.children && node.children[fileName]) {
+    delete node.children[fileName];
+    return;
+  }
+  print(`Could Not Find ${filePath}`);
+}
+
+function cmdCopy(args) {
+  if (args.length < 2) { print('The syntax of the command is incorrect.'); return; }
+  const src = normalizePath(args[0]);
+  const dst = normalizePath(args[1]);
+  const srcParts = src.split('\\'); const srcName = srcParts.pop(); const srcDir = getDirNode(srcParts.join('\\'));
+  if (!srcDir || !srcDir.children[srcName]) { print('The system cannot find the file specified.'); return; }
+  const file = srcDir.children[srcName];
+  const dstParts = dst.split('\\'); const dstName = dstParts.pop(); const dstDir = getDirNode(dstParts.join('\\'));
+  if (!dstDir) { print('The system cannot find the path specified.'); return; }
+  dstDir.children[dstName] = {...file};
+  print('        1 file(s) copied.');
+}
+
+function cmdMove(args) {
+  if (args.length < 2) { print('The syntax of the command is incorrect.'); return; }
+  cmdCopy(args);
+  cmdDel([args[0]]);
+}
+
+function cmdRen(args) {
+  if (args.length < 2) { print('The syntax of the command is incorrect.'); return; }
+  const src = normalizePath(args[0]);
+  const parts = src.split('\\'); const name = parts.pop(); const dir = getDirNode(parts.join('\\'));
+  if (!dir || !dir.children[name]) { print('The system cannot find the file specified.'); return; }
+  dir.children[args[1]] = dir.children[name];
+  delete dir.children[name];
+}
+
+function cmdVer() {
+  printBlank();
+  print('Microsoft Windows [Version 10.0.19045.3930]');
+}
+
+function cmdDate() {
+  const d = new Date();
+  print(`The current date is: ${d.toLocaleDateString('en-US', {weekday:'short', month:'2-digit', day:'2-digit', year:'numeric'})}`);
+  print('Enter the new date: (mm-dd-yy) ');
+}
+
+function cmdTime() {
+  const d = new Date();
+  const t = d.toLocaleTimeString('en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  print(`The current time is:  ${t}`);
+  print('Enter the new time: ');
+}
+
+function cmdSet(raw) {
+  if (!raw) {
+    for (const [k, v] of Object.entries(envVars)) print(`${k}=${v}`);
+    return;
+  }
+  if (raw.includes('=')) {
+    const idx = raw.indexOf('=');
+    const key = raw.substring(0, idx).toUpperCase();
+    const val = raw.substring(idx + 1);
+    envVars[key] = val;
+  } else {
+    const key = raw.toUpperCase();
+    if (envVars[key]) print(`${key}=${envVars[key]}`);
+    else print(`Environment variable ${raw} not defined`);
+  }
+}
+
+function cmdColor(args) {
+  if (!args.length) {
+    terminal.style.background = '#000';
+    terminal.style.color = '#c0c0c0';
+    output.style.color = '#c0c0c0';
+    cmdInput.style.color = '#c0c0c0';
+    promptEl.style.color = '#c0c0c0';
+    return;
+  }
+  const code = args[0].toLowerCase();
+  const colorMap = {
+    '0':'#000','1':'#000080','2':'#008000','3':'#008080',
+    '4':'#800000','5':'#800080','6':'#808000','7':'#c0c0c0',
+    '8':'#808080','9':'#0000ff','a':'#00ff00','b':'#00ffff',
+    'c':'#ff0000','d':'#ff00ff','e':'#ffff00','f':'#ffffff'
+  };
+  if (code.length === 2) {
+    const bg = colorMap[code[0]];
+    const fg = colorMap[code[1]];
+    if (bg && fg) {
+      terminal.style.background = bg;
+      terminal.style.color = fg;
+      cmdInput.style.color = fg;
+      promptEl.style.color = fg;
+      document.querySelectorAll('.output-line').forEach(el => el.style.color = fg);
+    }
+  }
+}
+
+function cmdTitle(raw) {
+  document.title = raw || 'Command Prompt';
+  document.querySelector('.titlebar-title').textContent = raw || 'Command Prompt';
+}
+
+function cmdPrompt(raw) {
+  if (!raw) return;
+  envVars['PROMPT'] = raw;
+  let p = raw.replace('$P', currentDir).replace('$G', '>').replace('$L', '<').replace('$N', 'C').replace('$_', '\n').replace('$S', ' ');
+  promptEl.textContent = p;
+}
+
+function cmdPing(args) {
+  const host = args.find(a => !a.startsWith('/')) || 'localhost';
+  const ip = host === 'localhost' ? '127.0.0.1' : `192.168.1.${Math.floor(Math.random()*254)+1}`;
+  print(`\nPinging ${host} [${ip}] with 32 bytes of data:`);
+  for (let i = 0; i < 4; i++) {
+    const ms = Math.floor(Math.random() * 10) + 1;
+    print(`Reply from ${ip}: bytes=32 time=${ms}ms TTL=128`);
+  }
+  printBlank();
+  print(`Ping statistics for ${ip}:`);
+  print(`    Packets: Sent = 4, Received = 4, Lost = 0 (0% loss),`);
+  print(`Approximate round trip times in milli-seconds:`);
+  print(`    Minimum = 1ms, Maximum = 9ms, Average = 4ms`);
+}
+
+function cmdIpconfig() {
+  printBlank();
+  print('Windows IP Configuration');
+  printBlank();
+  print('Ethernet adapter Ethernet:');
+  printBlank();
+  print('   Connection-specific DNS Suffix  . : localdomain');
+  print('   Link-local IPv6 Address . . . . . : fe80::a1b2:c3d4:e5f6:7890%3');
+  print('   IPv4 Address. . . . . . . . . . . : 192.168.1.100');
+  print('   Subnet Mask . . . . . . . . . . . : 255.255.255.0');
+  print('   Default Gateway . . . . . . . . . : 192.168.1.1');
+  printBlank();
+  print('Wireless LAN adapter Wi-Fi:');
+  printBlank();
+  print('   Media State . . . . . . . . . . . : Media disconnected');
+  print('   Connection-specific DNS Suffix  . :');
+}
+
+function cmdSysteminfo() {
+  const d = new Date();
+  print('');
+  print('Host Name:                 DESKTOP-PC');
+  print('OS Name:                   Microsoft Windows 10 Pro');
+  print('OS Version:                10.0.19045 N/A Build 19045');
+  print('OS Manufacturer:           Microsoft Corporation');
+  print('OS Configuration:          Standalone Workstation');
+  print('OS Build Type:             Multiprocessor Free');
+  print('Registered Owner:          User');
+  print('Registered Organization:   N/A');
+  print('Product ID:                00330-80000-00000-AA123');
+  print(`Original Install Date:     01/01/2024, 12:00:00 AM`);
+  print(`System Boot Time:          ${d.toLocaleDateString()}, ${d.toLocaleTimeString()}`);
+  print('System Manufacturer:       Dell Inc.');
+  print('System Model:              OptiPlex 7090');
+  print('System Type:               x64-based PC');
+  print('Processor(s):              1 Processor(s) Installed.');
+  print('                           [01]: Intel64 Family 6 Model 167 Stepping 1 GenuineIntel ~3600 Mhz');
+  print('BIOS Version:              Dell Inc. 1.12.0, 1/1/2024');
+  print('Windows Directory:         C:\\Windows');
+  print('System Directory:          C:\\Windows\\system32');
+  print('Boot Device:               \\Device\\HarddiskVolume2');
+  print('System Locale:             en-us;English (United States)');
+  print('Input Locale:              en-us;English (United States)');
+  print(`Time Zone:                 (UTC-05:00) Eastern Time (US & Canada)`);
+  print('Total Physical Memory:     16,384 MB');
+  print('Available Physical Memory: 8,192 MB');
+  print('Virtual Memory: Max Size:  18,817 MB');
+  print('Virtual Memory: Available: 10,247 MB');
+  print('Virtual Memory: In Use:    8,570 MB');
+  print('Page File Location(s):     C:\\pagefile.sys');
+  print('Domain:                    WORKGROUP');
+  print('Logon Server:              \\\\DESKTOP-PC');
+  print('Hotfix(s):                 5 Hotfix(s) Installed.');
+  print('                           [01]: KB5034441');
+  print('                           [02]: KB5034843');
+  print('                           [03]: KB5035941');
+  print('                           [04]: KB5036210');
+  print('                           [05]: KB5037849');
+  print('Network Card(s):           1 NIC(s) Installed.');
+  print('                           [01]: Intel(R) I219-V');
+  print('                                 Connection Name: Ethernet');
+  print('                                 DHCP Enabled:    Yes');
+  print('                                 DHCP Server:     192.168.1.1');
+  print('                                 IP address(es)');
+  print('                                 [01]: 192.168.1.100');
+  print('Hyper-V Requirements:      VM Monitor Mode Extensions: Yes');
+  print('                           Virtualization Enabled In Firmware: Yes');
+  print('                           Second Level Address Translation: Yes');
+  print('                           Data Execution Prevention Available: Yes');
+}
+
+function cmdTasklist() {
+  printBlank();
+  print('Image Name                     PID Session Name        Session#    Mem Usage');
+  print('========================= ======== ================ =========== ============');
+  const procs = [
+    ['System Idle Process', '0', 'Services', '0', '8 K'],
+    ['System', '4', 'Services', '0', '116 K'],
+    ['Registry', '80', 'Services', '0', '38,840 K'],
+    ['smss.exe', '336', 'Services', '0', '776 K'],
+    ['csrss.exe', '432', 'Services', '0', '3,680 K'],
+    ['wininit.exe', '520', 'Services', '0', '4,540 K'],
+    ['csrss.exe', '528', 'Console', '1', '12,400 K'],
+    ['winlogon.exe', '596', 'Console', '1', '9,756 K'],
+    ['services.exe', '648', 'Services', '0', '8,208 K'],
+    ['lsass.exe', '680', 'Services', '0', '24,320 K'],
+    ['svchost.exe', '788', 'Services', '0', '16,488 K'],
+    ['svchost.exe', '844', 'Services', '0', '8,912 K'],
+    ['svchost.exe', '912', 'Services', '0', '56,208 K'],
+    ['svchost.exe', '956', 'Services', '0', '12,644 K'],
+    ['svchost.exe', '396', 'Services', '0', '9,100 K'],
+    ['dwm.exe', '912', 'Console', '1', '48,232 K'],
+    ['explorer.exe', '1852', 'Console', '1', '68,980 K'],
+    ['taskhostw.exe', '2060', 'Console', '1', '12,660 K'],
+    ['SearchIndexer.exe', '2188', 'Services', '0', '38,460 K'],
+    ['chrome.exe', '3420', 'Console', '1', '156,320 K'],
+    ['chrome.exe', '3456', 'Console', '1', '89,440 K'],
+    ['discord.exe', '4012', 'Console', '1', '112,768 K'],
+    ['cmd.exe', '4128', 'Console', '1', '3,024 K'],
+    ['conhost.exe', '4136', 'Console', '1', '11,256 K'],
+  ];
+  for (const [name, pid, sess, snum, mem] of procs) {
+    print(`${name.padEnd(26)}${pid.padStart(8)} ${sess.padEnd(16)} ${snum.padEnd(12)}${mem.padStart(12)}`);
+  }
+}
+
+function cmdNetstat() {
+  printBlank();
+  print('Active Connections');
+  printBlank();
+  print('  Proto  Local Address          Foreign Address        State');
+  print('  TCP    0.0.0.0:135            0.0.0.0:0              LISTENING');
+  print('  TCP    0.0.0.0:445            0.0.0.0:0              LISTENING');
+  print('  TCP    0.0.0.0:5040           0.0.0.0:0              LISTENING');
+  print('  TCP    127.0.0.1:1434         0.0.0.0:0              LISTENING');
+  print('  TCP    192.168.1.100:139      0.0.0.0:0              LISTENING');
+  print('  TCP    192.168.1.100:52341    172.217.10.46:443      ESTABLISHED');
+  print('  TCP    192.168.1.100:52342    140.82.114.25:443      ESTABLISHED');
+  print('  TCP    192.168.1.100:52347    192.168.1.1:80         TIME_WAIT');
+  print('  UDP    0.0.0.0:5353           *:*');
+  print('  UDP    0.0.0.0:5355           *:*');
+  print('  UDP    192.168.1.100:137      *:*');
+  print('  UDP    192.168.1.100:138      *:*');
+}
+
+function cmdTree(args) {
+  const target = args.find(a => !a.startsWith('/')) || currentDir;
+  const node = getDirNode(normalizePath(target));
+  if (!node) { print('The system cannot find the path specified.'); return; }
+  print(`Folder PATH listing for volume Windows`);
+  print(`Volume serial number is B4D7-9F3A`);
+  print(normalizePath(target));
+  printTree(node, '');
+}
+
+function printTree(node, prefix) {
+  if (!node.children) return;
+  const entries = Object.entries(node.children).filter(([,v]) => v.type === 'dir');
+  entries.forEach(([name, child], i) => {
+    const isLast = i === entries.length - 1;
+    print(`${prefix}${isLast ? '└' : '├'}───${name}`);
+    printTree(child, prefix + (isLast ? '    ' : '│   '));
+  });
+}
+
+function cmdFind(args, raw) {
+  const strMatch = raw.match(/"([^"]+)"/);
+  if (!strMatch) { print('FIND: Parameter format not correct'); return; }
+  const str = strMatch[1];
+  const fileArg = args.find(a => !a.startsWith('/') && !a.startsWith('"'));
+  if (!fileArg) { print('FIND: File not found - '); return; }
+  const filePath = normalizePath(fileArg);
+  const parts = filePath.split('\\'); const fname = parts.pop();
+  const dir = getDirNode(parts.join('\\'));
+  if (!dir || !dir.children || !dir.children[fname]) { print(`File not found - ${fileArg}`); return; }
+  const content = dir.children[fname].content || '';
+  print(`---------- ${filePath.toUpperCase()}`);
+  content.split('\n').forEach(line => { if (line.toLowerCase().includes(str.toLowerCase())) print(line); });
+}
+
+function cmdChkdsk() {
+  print('The type of the file system is NTFS.');
+  print('Volume label is Windows.');
+  printBlank();
+  print('WARNING!  F parameter not specified.');
+  print('Running CHKDSK in read-only mode.');
+  printBlank();
+  print('Stage 1: Examining basic file system structure ...');
+  print('  307200 file records processed.                                          ');
+  printBlank();
+  print('File verification completed.');
+  print('  1024 large file records processed.                                  ');
+  print('  0 bad file records processed.                                        ');
+  printBlank();
+  print('Stage 2: Examining file name linkage ...');
+  print('  412416 index entries processed.                                          ');
+  printBlank();
+  print('Index verification completed.');
+  printBlank();
+  print('Stage 3: Examining security descriptors ...');
+  print('Security descriptor verification completed.');
+  print('  44369 data files processed.                                              ');
+  printBlank();
+  print('CHKDSK is verifying Usn Journal...');
+  print('  37601032 USN bytes processed.                                             ');
+  printBlank();
+  print('Usn Journal verification completed.');
+  printBlank();
+  print('Windows has scanned the file system and found no problems.');
+  print('No further action is required.');
+  printBlank();
+  print(' 499580927 KB total disk space.');
+  print('  62518272 KB in 44370 files.');
+  print('     82432 KB in 3892 indexes.');
+  print('         0 KB in bad sectors.');
+  print('    657699 KB in use by the system.');
+  print('     65536 KB occupied by the log file.');
+  print(' 436322524 KB available on disk.');
+  printBlank();
+  print('      4096 bytes in each allocation unit.');
+  print(' 124895231 total allocation units on disk.');
+  print(' 109080631 allocation units available on disk.');
+}
+
+function cmdShutdown(args) {
+  if (args.includes('/s')) {
+    print('Shutdown in progress...'); setTimeout(() => { document.body.innerHTML = '<div style="background:#000;color:#fff;height:100vh;display:flex;align-items:center;justify-content:center;font-family:Segoe UI;font-size:24px;">Shutting down...</div>'; }, 500);
+  } else if (args.includes('/r')) {
+    print('Restart in progress...');
+  } else if (args.includes('/l')) {
+    print('Logging off...');
+  } else if (args.includes('/a')) {
+    print('The scheduled shutdown has been canceled.');
+  } else {
+    print('Usage: SHUTDOWN [/i | /l | /s | /sg | /r | /g | /a | /p | /h | /e | /o] [/hybrid]');
+    print('       [/soft] [/fw] [/f]');
+    print('       [/m \\\\computername] [/t xxx] [/d [p|u:]xx:yy [/c "comment"]]');
+  }
+}
+
+function cmdWhere(args) {
+  if (!args.length) { print('ERROR: Invalid argument/option. - \'-\''); return; }
+  const cmd = args[0].toLowerCase();
+  const paths = { 'cmd': 'C:\\Windows\\System32\\cmd.exe', 'notepad': 'C:\\Windows\\System32\\notepad.exe', 'calc': 'C:\\Windows\\System32\\calc.exe', 'explorer': 'C:\\Windows\\explorer.exe', 'powershell': 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe' };
+  if (paths[cmd]) print(paths[cmd]);
+  else print(`INFO: Could not find files for the given pattern(s).`);
+}
+
+function cmdNet(args) {
+  const sub = (args[0] || '').toLowerCase();
+  if (sub === 'user') {
+    print('\nUser accounts for \\\\DESKTOP-PC\n');
+    print('-------------------------------------------------------------------------------');
+    print('Administrator            DefaultAccount           Guest                    ');
+    print('User                     WDAGUtilityAccount       ');
+    print('The command completed successfully.');
+  } else if (sub === 'start') {
+    print('These Windows services are started:\n');
+    print('   Background Intelligent Transfer Service');
+    print('   Base Filtering Engine');
+    print('   Cryptographic Services');
+    print('   DCOM Server Process Launcher');
+    print('   DHCP Client');
+    print('   DNS Client');
+    print('   Network Location Awareness');
+    print('   Windows Update');
+    print('\nThe command completed successfully.');
+  } else {
+    print('The syntax of this command is:\n\nNET\n[ ACCOUNTS | COMPUTER | CONFIG | CONTINUE | FILE | GROUP | HELP |\n  HELPMSG | LOCALGROUP | PAUSE | SESSION | SHARE | START |\n  STATISTICS | STOP | TIME | USE | USER | VIEW ]');
+  }
+}
+
+function cmdNslookup(args) {
+  const host = args[0] || 'localhost';
+  print(`Server:  dns.google`);
+  print(`Address:  8.8.8.8`);
+  printBlank();
+  print(`Non-authoritative answer:`);
+  print(`Name:    ${host}`);
+  print(`Address:  ${host === 'localhost' ? '127.0.0.1' : '142.250.80.46'}`);
+}
+
+function cmdTracert(args) {
+  const host = args.find(a => !a.startsWith('/')) || 'google.com';
+  print(`\nTracing route to ${host} [142.250.80.46]`);
+  print('over a maximum of 30 hops:\n');
+  const hops = [
+    ['1', '1 ms', '1 ms', '<1 ms', '192.168.1.1'],
+    ['2', '8 ms', '7 ms', '8 ms', '10.0.0.1'],
+    ['3', '10 ms', '10 ms', '11 ms', '72.14.232.1'],
+    ['4', '12 ms', '11 ms', '12 ms', '108.170.246.1'],
+    ['5', '13 ms', '12 ms', '13 ms', '142.250.80.46'],
+  ];
+  for (const [n, t1, t2, t3, ip] of hops) {
+    print(`  ${n.padStart(2)}    ${t1.padEnd(8)}${t2.padEnd(8)}${t3.padEnd(8)}${ip}`);
+  }
+  printBlank();
+  print('Trace complete.');
+}
+
+// Window controls
+function closeWindow() {
+  win.style.display = 'none';
+}
+
+function minimizeWindow() {
+  win.style.display = 'none';
+  setTimeout(() => win.style.display = 'flex', 2000);
+}
+
+function toggleMaximize() {
+  if (isMaximized) {
+    win.style.width = originalStyle.width;
+    win.style.height = originalStyle.height;
+    win.style.position = '';
+    win.style.top = '';
+    win.style.left = '';
+    isMaximized = false;
+  } else {
+    originalStyle = { width: win.style.width, height: win.style.height };
+    win.style.width = '100vw';
+    win.style.height = '100vh';
+    win.style.position = 'fixed';
+    win.style.top = '0';
+    win.style.left = '0';
+    isMaximized = true;
+  }
+}
+
+// Drag window
+let dragging = false, dragOffX = 0, dragOffY = 0;
+titlebar.addEventListener('mousedown', e => {
+  if (isMaximized) return;
+  dragging = true;
+  const rect = win.getBoundingClientRect();
+  dragOffX = e.clientX - rect.left;
+  dragOffY = e.clientY - rect.top;
+  win.style.position = 'fixed';
+  document.body.style.userSelect = 'none';
+});
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  win.style.left = (e.clientX - dragOffX) + 'px';
+  win.style.top = (e.clientY - dragOffY) + 'px';
+});
+document.addEventListener('mouseup', () => {
+  dragging = false;
+  document.body.style.userSelect = '';
+});
+
+init();
+</script>
+
+</body>
+</html>
