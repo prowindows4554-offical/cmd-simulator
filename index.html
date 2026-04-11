@@ -357,24 +357,23 @@ margin-left: 1px;
   <div class="menubar" id="menubar">
     <div class="menu-item" id="menu-file" onclick="toggleMenu('menu-file')">File
       <div class="dropdown">
-        <div class="dropdown-item disabled">New Tab</div>
-        <div class="dropdown-item disabled">Open...</div>
+        <div class="dropdown-item" data-key="upload" onclick="triggerBatUpload(); closeAllMenus()">Upload .bat file...</div>
         <div class="dropdown-separator"></div>
-        <div class="dropdown-item disabled">Save As...</div>
+        <div class="dropdown-item disabled" data-key="saveAs">Save As...</div>
         <div class="dropdown-separator"></div>
-        <div class="dropdown-item" onclick="closeWindow()">Exit</div>
+        <div class="dropdown-item" data-key="exit" onclick="closeWindow()">Exit</div>
       </div>
     </div>
     <div class="menu-item" id="menu-edit" onclick="toggleMenu('menu-edit')">Edit
       <div class="dropdown">
-        <div class="dropdown-item disabled">Cut</div>
-        <div class="dropdown-item disabled">Copy</div>
-        <div class="dropdown-item disabled">Paste</div>
+        <div class="dropdown-item disabled" data-key="cut">Cut</div>
+        <div class="dropdown-item disabled" data-key="copy">Copy</div>
+        <div class="dropdown-item disabled" data-key="paste">Paste</div>
         <div class="dropdown-separator"></div>
-        <div class="dropdown-item" onclick="output.innerHTML=''; closeAllMenus()">Clear Screen</div>
+        <div class="dropdown-item" data-key="clearScreen" onclick="output.innerHTML=''; closeAllMenus()">Clear Screen</div>
         <div class="dropdown-separator"></div>
-        <div class="dropdown-item disabled">Select All</div>
-        <div class="dropdown-item disabled">Find...</div>
+        <div class="dropdown-item disabled" data-key="selectAll">Select All</div>
+        <div class="dropdown-item disabled" data-key="find">Find...</div>
       </div>
     </div>
     <div class="menu-item" id="menu-view" onclick="toggleMenu('menu-view')">View
@@ -384,16 +383,29 @@ margin-left: 1px;
         <div class="dropdown-item" onclick="cmdColorFromMenu('1F'); closeAllMenus()">White on Blue</div>
         <div class="dropdown-item" onclick="cmdColorFromMenu('F0'); closeAllMenus()">Black on White</div>
         <div class="dropdown-separator"></div>
-        <div class="dropdown-item" onclick="toggleMaximize(); closeAllMenus()">Full Screen</div>
+        <div class="dropdown-item" data-key="fullScreen" onclick="toggleMaximize(); closeAllMenus()">Full Screen</div>
+      </div>
+    </div>
+    <div class="menu-item" id="menu-lang" onclick="toggleMenu('menu-lang')">Language
+      <div class="dropdown" style="max-height:300px;overflow-y:auto;">
+        <div class="dropdown-item" onclick="setLang('en'); closeAllMenus()">🇬🇧 English</div>
+        <div class="dropdown-item" onclick="setLang('ru'); closeAllMenus()">🇷🇺 Русский</div>
+        <div class="dropdown-item" onclick="setLang('es'); closeAllMenus()">🇪🇸 Español</div>
+        <div class="dropdown-item" onclick="setLang('fr'); closeAllMenus()">🇫🇷 Français</div>
+        <div class="dropdown-item" onclick="setLang('zh'); closeAllMenus()">🇨🇳 中文</div>
       </div>
     </div>
     <div class="menu-item" id="menu-github" onclick="openGitHub()">GitHub</div>
     <div class="menu-item" id="menu-help" onclick="toggleMenu('menu-help')">Help
       <div class="dropdown">
-        <div class="dropdown-item" onclick="showAbout()">About Command Prompt...</div>
+        <div class="dropdown-item" data-key="about" onclick="showAbout()">About Command Prompt...</div>
       </div>
     </div>
   </div>
+
+  <!-- Hidden file input for .bat upload -->
+
+  <input type="file" id="bat-file-input" accept=".bat,.cmd" style="display:none" onchange="handleBatUpload(event)" />
 
   <!-- About window -->
 
@@ -591,8 +603,8 @@ const now = new Date();
 const bootDate = now.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
 function init() {
-  print('Microsoft Windows [Version 10.0.19045.3930]');
-  print('(c) Microsoft Corporation. All rights reserved.');
+  print(t.bootLine1);
+  print(t.bootLine2);
   printBlank();
   updatePrompt();
   focusInput();
@@ -694,7 +706,7 @@ function processCommand(input) {
     case 'color': cmdColor(args); break;
     case 'title': cmdTitle(raw); break;
     case 'prompt': cmdPrompt(raw); break;
-    case 'pause': print('Press any key to continue . . .'); break;
+    case 'pause': print(t.pressKey); break;
     case 'exit': closeWindow(); break;
     case 'ping': cmdPing(args); break;
     case 'ipconfig': cmdIpconfig(); break;
@@ -741,8 +753,8 @@ function processCommand(input) {
     case 'powershell': print("Windows PowerShell\r\nCopyright (C) Microsoft Corporation. All rights reserved.\r\n\r\nTry the new cross-platform PowerShell https://aka.ms/pscore6"); break;
     case 'cmd': print('Microsoft Windows [Version 10.0.19045.3930]\r\n(c) Microsoft Corporation. All rights reserved.'); break;
     default:
-      print(`'${parts[0]}' is not recognized as an internal or external command,`);
-      print('operable program or batch file.');
+      print(`'${parts[0]}' ${t.notRecognized}`);
+      print(t.notRecognized2);
   }
   printBlank();
 }
@@ -858,7 +870,7 @@ function cmdDir(args) {
 
   const node = getDirNode(targetPath);
   if (!node || node.type !== 'dir') {
-    print(`The system cannot find the path specified.`); return;
+    print(t.pathNotFound); return;
   }
 
   print(` Volume in drive C is Windows`);
@@ -906,7 +918,7 @@ function cmdCd(arg) {
   if (node && node.type === 'dir') {
     currentDir = target;
   } else {
-    print('The system cannot find the path specified.');
+    print(t.pathNotFound);
   }
 }
 
@@ -918,7 +930,7 @@ function cmdEcho(raw) {
 }
 
 function cmdType(args) {
-  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  if (!args.length) { print(t.syntaxError); return; }
   const filePath = normalizePath(args[0]);
   const parts = filePath.split('\\');
   const fileName = parts.pop();
@@ -935,34 +947,34 @@ function cmdType(args) {
     print(createdFiles[filePath].content || '');
     return;
   }
-  print(`The system cannot find the file specified.`);
+  print(t.fileNotFound);
 }
 
 function cmdMkdir(args) {
-  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  if (!args.length) { print(t.syntaxError); return; }
   const dirName = args[0];
   const target = normalizePath(dirName);
   const parts = target.split('\\');
   const name = parts.pop();
   const parentPath = parts.join('\\');
   const parent = getDirNode(parentPath);
-  if (!parent) { print('The system cannot find the path specified.'); return; }
-  if (parent.children[name]) { print('A subdirectory or file already exists.'); return; }
+  if (!parent) { print(t.pathNotFound); return; }
+  if (parent.children[name]) { print(t.alreadyExists); return; }
   parent.children[name] = { type: 'dir', children: {} };
 }
 
 function cmdRmdir(args) {
-  if (!args.length) { print('The syntax of the command is incorrect.'); return; }
+  if (!args.length) { print(t.syntaxError); return; }
   const target = normalizePath(args[0]);
   const parts = target.split('\\');
   const name = parts.pop();
   const parentPath = parts.join('\\');
   const parent = getDirNode(parentPath);
-  if (!parent || !parent.children[name]) { print('The system cannot find the file specified.'); return; }
+  if (!parent || !parent.children[name]) { print(t.fileNotFound); return; }
   const node = parent.children[name];
-  if (node.type !== 'dir') { print('The directory name is invalid.'); return; }
+  if (node.type !== 'dir') { print(t.syntaxError); return; }
   if (Object.keys(node.children).length > 0 && !args.includes('/s')) {
-    print('The directory is not empty.'); return;
+    print(t.dirNotEmpty); return;
   }
   delete parent.children[name];
 }
@@ -1490,8 +1502,268 @@ function handleOverlayClick(e) {
   if (e.target === document.getElementById('about-overlay')) closeAbout();
 }
 
+// ── Language system ──────────────────────────────────────────
+const langs = {
+  en: {
+    file:'File', edit:'Edit', view:'View', language:'Language', help:'Help',
+    upload:'Upload .bat file...', saveAs:'Save As...', exit:'Exit',
+    cut:'Cut', copy:'Copy', paste:'Paste', clearScreen:'Clear Screen',
+    selectAll:'Select All', find:'Find...', fullScreen:'Full Screen',
+    about:'About Command Prompt...', github:'GitHub',
+    notRecognized:"is not recognized as an internal or external command,",
+    notRecognized2:'operable program or batch file.',
+    pathNotFound:'The system cannot find the path specified.',
+    fileNotFound:'The system cannot find the file specified.',
+    syntaxError:'The syntax of the command is incorrect.',
+    accessDenied:'Access is denied.',
+    dirNotEmpty:'The directory is not empty.',
+    alreadyExists:'A subdirectory or file already exists.',
+    pressKey:'Press any key to continue . . .',
+    bootLine1:'Microsoft Windows [Version 10.0.19045.3930]',
+    bootLine2:'(c) Microsoft Corporation. All rights reserved.',
+  },
+  ru: {
+    file:'Файл', edit:'Правка', view:'Вид', language:'Язык', help:'Справка',
+    upload:'Загрузить .bat файл...', saveAs:'Сохранить как...', exit:'Выход',
+    cut:'Вырезать', copy:'Копировать', paste:'Вставить', clearScreen:'Очистить экран',
+    selectAll:'Выделить всё', find:'Найти...', fullScreen:'Полный экран',
+    about:'О программе...', github:'GitHub',
+    notRecognized:'не является внутренней или внешней командой,',
+    notRecognized2:'исполняемой программой или пакетным файлом.',
+    pathNotFound:'Системе не удается найти указанный путь.',
+    fileNotFound:'Системе не удается найти указанный файл.',
+    syntaxError:'Синтаксис команды неверен.',
+    accessDenied:'Отказано в доступе.',
+    dirNotEmpty:'Каталог не пуст.',
+    alreadyExists:'Подкаталог или файл уже существует.',
+    pressKey:'Для продолжения нажмите любую клавишу . . .',
+    bootLine1:'Microsoft Windows [Version 10.0.19045.3930]',
+    bootLine2:'(c) Корпорация Майкрософт. Все права защищены.',
+  },
+  es: {
+    file:'Archivo', edit:'Editar', view:'Ver', language:'Idioma', help:'Ayuda',
+    upload:'Cargar archivo .bat...', saveAs:'Guardar como...', exit:'Salir',
+    cut:'Cortar', copy:'Copiar', paste:'Pegar', clearScreen:'Limpiar pantalla',
+    selectAll:'Seleccionar todo', find:'Buscar...', fullScreen:'Pantalla completa',
+    about:'Acerca del símbolo del sistema...', github:'GitHub',
+    notRecognized:'no se reconoce como un comando interno o externo,',
+    notRecognized2:'programa o archivo por lotes ejecutable.',
+    pathNotFound:'El sistema no puede encontrar la ruta especificada.',
+    fileNotFound:'El sistema no puede encontrar el archivo especificado.',
+    syntaxError:'La sintaxis del comando no es correcta.',
+    accessDenied:'Acceso denegado.',
+    dirNotEmpty:'El directorio no está vacío.',
+    alreadyExists:'Ya existe un subdirectorio o archivo.',
+    pressKey:'Presione cualquier tecla para continuar . . .',
+    bootLine1:'Microsoft Windows [Versión 10.0.19045.3930]',
+    bootLine2:'(c) Microsoft Corporation. Todos los derechos reservados.',
+  },
+  fr: {
+    file:'Fichier', edit:'Édition', view:'Affichage', language:'Langue', help:'Aide',
+    upload:'Charger un fichier .bat...', saveAs:'Enregistrer sous...', exit:'Quitter',
+    cut:'Couper', copy:'Copier', paste:'Coller', clearScreen:'Effacer l\'écran',
+    selectAll:'Tout sélectionner', find:'Rechercher...', fullScreen:'Plein écran',
+    about:'À propos de l\'invite de commandes...', github:'GitHub',
+    notRecognized:'n\'est pas reconnu en tant que commande interne ou externe,',
+    notRecognized2:'un programme exécutable ou un fichier de commandes.',
+    pathNotFound:'Le système ne peut pas trouver le chemin d\'accès spécifié.',
+    fileNotFound:'Le système ne peut pas trouver le fichier spécifié.',
+    syntaxError:'La syntaxe de la commande est incorrecte.',
+    accessDenied:'Accès refusé.',
+    dirNotEmpty:'Le répertoire n\'est pas vide.',
+    alreadyExists:'Un sous-répertoire ou fichier existe déjà.',
+    pressKey:'Appuyez sur une touche pour continuer...',
+    bootLine1:'Microsoft Windows [Version 10.0.19045.3930]',
+    bootLine2:'(c) Microsoft Corporation. Tous droits réservés.',
+  },
+  de: {
+    file:'Datei', edit:'Bearbeiten', view:'Ansicht', language:'Sprache', help:'Hilfe',
+    upload:'.bat-Datei hochladen...', saveAs:'Speichern unter...', exit:'Beenden',
+    cut:'Ausschneiden', copy:'Kopieren', paste:'Einfügen', clearScreen:'Bildschirm löschen',
+    selectAll:'Alles auswählen', find:'Suchen...', fullScreen:'Vollbild',
+    about:'Über Eingabeaufforderung...', github:'GitHub',
+    notRecognized:'wird nicht als interner oder externer Befehl erkannt,',
+    notRecognized2:'ausführbares Programm oder Batchdatei.',
+    pathNotFound:'Das System kann den angegebenen Pfad nicht finden.',
+    fileNotFound:'Das System kann die angegebene Datei nicht finden.',
+    syntaxError:'Die Syntax des Befehls ist falsch.',
+    accessDenied:'Zugriff verweigert.',
+    dirNotEmpty:'Das Verzeichnis ist nicht leer.',
+    alreadyExists:'Ein Unterverzeichnis oder eine Datei ist bereits vorhanden.',
+    pressKey:'Drücken Sie eine beliebige Taste, um fortzufahren...',
+    bootLine1:'Microsoft Windows [Version 10.0.19045.3930]',
+    bootLine2:'(c) Microsoft Corporation. Alle Rechte vorbehalten.',
+  },
+  zh: {
+    file:'文件', edit:'编辑', view:'查看', language:'语言', help:'帮助',
+    upload:'上传 .bat 文件...', saveAs:'另存为...', exit:'退出',
+    cut:'剪切', copy:'复制', paste:'粘贴', clearScreen:'清屏',
+    selectAll:'全选', find:'查找...', fullScreen:'全屏',
+    about:'关于命令提示符...', github:'GitHub',
+    notRecognized:'不是内部或外部命令，',
+    notRecognized2:'也不是可运行的程序或批处理文件。',
+    pathNotFound:'系统找不到指定的路径。',
+    fileNotFound:'系统找不到指定的文件。',
+    syntaxError:'命令语法不正确。',
+    accessDenied:'访问被拒绝。',
+    dirNotEmpty:'目录不是空的。',
+    alreadyExists:'子目录或文件已经存在。',
+    pressKey:'请按任意键继续...',
+    bootLine1:'Microsoft Windows [版本 10.0.19045.3930]',
+    bootLine2:'(c) Microsoft Corporation。保留所有权利。',
+  },
+};
+
+let currentLang = 'en';
+let t = langs.en;
+
+function setLang(code) {
+  if (!langs[code]) return;
+  currentLang = code;
+  t = langs[code];
+
+  // Update menubar labels
+  const menuFile = document.getElementById('menu-file');
+  const menuEdit = document.getElementById('menu-edit');
+  const menuView = document.getElementById('menu-view');
+  const menuLang = document.getElementById('menu-lang');
+  const menuGithub = document.getElementById('menu-github');
+  const menuHelp = document.getElementById('menu-help');
+
+  // Update top-level menu item text (first text node only)
+  function setMenuText(el, text) {
+    for (let node of el.childNodes) {
+      if (node.nodeType === 3) { node.textContent = text; return; }
+    }
+  }
+  setMenuText(menuFile, t.file);
+  setMenuText(menuEdit, t.edit);
+  setMenuText(menuView, t.view);
+  setMenuText(menuLang, t.language);
+  setMenuText(menuGithub, t.github);
+  setMenuText(menuHelp, t.help);
+
+  // Update dropdown items by data-key
+  document.querySelectorAll('[data-key]').forEach(el => {
+    if (t[el.dataset.key]) el.textContent = t[el.dataset.key];
+  });
+}
+
+// ── .bat file support ────────────────────────────────────────
+function triggerBatUpload() {
+  document.getElementById('bat-file-input').click();
+}
+
+function handleBatUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result;
+    askBatDestination(file.name, content);
+  };
+  reader.readAsText(e);
+  event.target.value = '';
+}
+
+function handleBatUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result;
+    askBatDestination(file.name, content);
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function askBatDestination(fileName, content) {
+  // Show destination dialog
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;';
+  
+  const dlg = document.createElement('div');
+  dlg.style.cssText = `
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:380px;background:#f0f0f0;border:1px solid #999;
+    box-shadow:3px 3px 10px rgba(0,0,0,0.5);font-family:'Segoe UI',Tahoma,sans-serif;
+  `;
+  
+  dlg.innerHTML = `
+    <div style="background:linear-gradient(to bottom,#0a3a6e,#073060);height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 4px 0 8px;">
+      <span style="color:#fff;font-size:12px;">Upload: ${fileName}</span>
+      <div onclick="this.closest('.bat-dlg-overlay').remove()" style="width:21px;height:21px;background:#c75050;color:#fff;border:1px solid #a33;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;">✕</div>
+    </div>
+    <div style="padding:16px 20px 8px;">
+      <p style="font-size:12px;color:#333;margin-bottom:10px;">Select destination folder:</p>
+      <select id="bat-dest-select" style="width:100%;font-size:12px;padding:4px;border:1px solid #aaa;font-family:'Segoe UI',sans-serif;">
+        <option value="C:\\Users\\User">C:\\Users\\User</option>
+        <option value="C:\\Users\\User\\Desktop">C:\\Users\\User\\Desktop</option>
+        <option value="C:\\Users\\User\\Documents">C:\\Users\\User\\Documents</option>
+        <option value="C:\\Users\\User\\Downloads">C:\\Users\\User\\Downloads</option>
+      </select>
+    </div>
+    <div style="padding:8px 20px 16px;display:flex;gap:8px;justify-content:center;">
+      <button id="bat-save-btn" style="background:#e1e1e1;border:1px solid #aaa;padding:4px 24px;font-size:12px;font-family:'Segoe UI',sans-serif;cursor:pointer;">Save & Run</button>
+      <button onclick="this.closest('.bat-dlg-overlay').remove()" style="background:#e1e1e1;border:1px solid #aaa;padding:4px 24px;font-size:12px;font-family:'Segoe UI',sans-serif;cursor:pointer;">Cancel</button>
+    </div>
+  `;
+  
+  overlay.className = 'bat-dlg-overlay';
+  overlay.appendChild(dlg);
+  document.body.appendChild(overlay);
+
+  dlg.querySelector('#bat-save-btn').onclick = function() {
+    const dest = dlg.querySelector('#bat-dest-select').value;
+    overlay.remove();
+    saveBatAndRun(fileName, content, dest);
+  };
+}
+
+function saveBatAndRun(fileName, content, destPath) {
+  // Save to virtual filesystem
+  const node = getDirNode(destPath);
+  if (node && node.children) {
+    node.children[fileName] = {
+      type: 'file',
+      content: content,
+      size: content.length,
+      date: new Date().toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'}) + '  ' +
+            new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})
+    };
+  }
+
+  printBlank();
+  print(`${destPath}>${fileName}`);
+  executeBat(content);
+  printBlank();
+  scrollToBottom();
+}
+
+function executeBat(content) {
+  const lines = content.split(/\r?\n/);
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) continue;
+    if (line.startsWith('::') || line.toLowerCase().startsWith('rem ')) continue;
+    if (line.toLowerCase() === '@echo off') continue;
+    if (line.toLowerCase().startsWith('echo off')) continue;
+
+    // Echo the line like cmd does
+    if (!line.startsWith('@')) {
+      print(`${currentDir}>${line}`);
+    }
+
+    const cleanLine = line.startsWith('@') ? line.substring(1) : line;
+    processCommand(cleanLine);
+  }
+}
+
 init();
 </script>
+
+// <script src="android_patch.js"></script>
 
 </body>
 </html>
