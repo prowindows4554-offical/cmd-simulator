@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -8,333 +7,544 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-background: #000;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-font-family: ‘Consolas’, ‘Courier New’, monospace;
-}
+  body {
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
 
-.window {
-width: 800px;
-height: 520px;
-background: #000;
-border: 1px solid #888;
-display: flex;
-flex-direction: column;
-box-shadow: 2px 2px 8px rgba(0,0,0,0.8);
-resize: both;
-overflow: hidden;
-min-width: 400px;
-min-height: 200px;
-}
+  .window {
+    width: 800px;
+    height: 520px;
+    background: #000;
+    border: 1px solid #888;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    resize: both;
+    overflow: hidden;
+    min-width: 400px;
+    min-height: 200px;
+  }
 
-.titlebar {
-background: linear-gradient(to bottom, #0a3a6e, #073060);
-height: 28px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0 4px 0 8px;
-flex-shrink: 0;
-cursor: default;
-user-select: none;
-}
+  .titlebar {
+    background: linear-gradient(to bottom, #0a3a6e, #073060);
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 0 8px;
+    flex-shrink: 0;
+    cursor: default;
+    user-select: none;
+  }
 
-.titlebar-left {
-display: flex;
-align-items: center;
-gap: 6px;
-}
+  .titlebar-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-.titlebar-icon {
-width: 16px;
-height: 16px;
-}
+  .titlebar-icon {
+    width: 16px;
+    height: 16px;
+  }
 
-.titlebar-icon svg {
-width: 100%;
-height: 100%;
-}
+  .titlebar-icon svg {
+    width: 100%;
+    height: 100%;
+  }
 
-.titlebar-title {
-color: #fff;
-font-size: 12px;
-font-family: ‘Segoe UI’, Tahoma, sans-serif;
-}
+  .titlebar-title {
+    color: #fff;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
 
-.titlebar-buttons {
-display: flex;
-height: 100%;
-}
+  .titlebar-buttons {
+    display: flex;
+    height: 100%;
+  }
 
-.tb-btn {
-width: 46px;
-height: 100%;
-display: flex;
-align-items: center;
-justify-content: center;
-color: #fff;
-font-size: 10px;
-cursor: pointer;
-font-family: ‘Segoe UI’, Tahoma, sans-serif;
-}
+  .tb-btn {
+    width: 46px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
 
-.tb-btn:hover { background: rgba(255,255,255,0.15); }
-.tb-btn.close:hover { background: #e81123; }
+  .tb-btn:hover { background: rgba(255,255,255,0.15); }
+  .tb-btn.close:hover { background: #e81123; }
 
-.menubar {
-background: #000;
-border-bottom: 1px solid #333;
-padding: 2px 4px;
-display: flex;
-gap: 2px;
-flex-shrink: 0;
-}
+  .menubar {
+    background: #000;
+    border-bottom: 1px solid #333;
+    padding: 2px 4px;
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+  }
 
-.menu-item {
-color: #c0c0c0;
-font-size: 11px;
-font-family: ‘Segoe UI’, Tahoma, sans-serif;
-padding: 2px 8px;
-cursor: default;
-user-select: none;
-position: relative;
-}
+  .menu-item {
+    color: #c0c0c0;
+    font-size: 11px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    padding: 2px 8px;
+    cursor: default;
+    user-select: none;
+    position: relative;
+  }
 
-.menu-item:hover, .menu-item.active {
-background: #1a1a1a;
-}
+  .menu-item:hover, .menu-item.active {
+    background: #1a1a1a;
+  }
 
-.dropdown {
-display: none;
-position: absolute;
-top: 100%;
-left: 0;
-background: #2d2d2d;
-border: 1px solid #555;
-min-width: 180px;
-z-index: 1000;
-box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
-}
+  .dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #2d2d2d;
+    border: 1px solid #555;
+    min-width: 180px;
+    z-index: 1000;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+  }
 
-.menu-item.active .dropdown {
-display: block;
-}
+  .menu-item.active .dropdown {
+    display: block;
+  }
 
-.dropdown-item {
-color: #c0c0c0;
-font-size: 11px;
-font-family: ‘Segoe UI’, Tahoma, sans-serif;
-padding: 5px 20px 5px 24px;
-cursor: default;
-user-select: none;
-white-space: nowrap;
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 20px;
-}
+  .dropdown-item {
+    color: #c0c0c0;
+    font-size: 11px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    padding: 5px 20px 5px 24px;
+    cursor: default;
+    user-select: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
 
-.dropdown-item:hover {
-background: #0078d7;
-color: #fff;
-}
+  .dropdown-item:hover {
+    background: #0078d7;
+    color: #fff;
+  }
 
-.dropdown-separator {
-height: 1px;
-background: #555;
-margin: 3px 2px;
-}
+  .dropdown-separator {
+    height: 1px;
+    background: #555;
+    margin: 3px 2px;
+  }
 
-.dropdown-item.disabled {
-color: #666;
-pointer-events: none;
-}
+  .dropdown-item.disabled {
+    color: #666;
+    pointer-events: none;
+  }
 
-/* About window */
-.about-overlay {
-display: none;
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-z-index: 9999;
-}
+  /* About window */
+  .about-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 9999;
+  }
 
-.about-overlay.visible { display: block; }
+  .about-overlay.visible { display: block; }
 
-.about-window {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 420px;
-background: #f0f0f0;
-border: 1px solid #999;
-box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
-font-family: ‘Segoe UI’, Tahoma, sans-serif;
-}
+  .about-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    background: #f0f0f0;
+    border: 1px solid #999;
+    box-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+  }
 
-.about-titlebar {
-background: linear-gradient(to bottom, #0a3a6e, #073060);
-height: 28px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0 4px 0 8px;
-user-select: none;
-cursor: default;
-}
+  .about-titlebar {
+    background: linear-gradient(to bottom, #0a3a6e, #073060);
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 0 8px;
+    user-select: none;
+    cursor: default;
+  }
 
-.about-titlebar-title {
-color: #fff;
-font-size: 12px;
-display: flex;
-align-items: center;
-gap: 6px;
-}
+  .about-titlebar-title {
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-.about-close {
-width: 21px;
-height: 21px;
-background: #c75050;
-color: #fff;
-border: 1px solid #a33;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 11px;
-cursor: pointer;
-}
+  .about-close {
+    width: 21px;
+    height: 21px;
+    background: #c75050;
+    color: #fff;
+    border: 1px solid #a33;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    cursor: pointer;
+  }
 
-.about-close:hover { background: #e74c3c; }
+  .about-close:hover { background: #e74c3c; }
 
-.about-body {
-padding: 20px 24px 10px;
-display: flex;
-gap: 16px;
-align-items: flex-start;
-}
+  .about-body {
+    padding: 20px 24px 10px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
 
-.about-icon {
-flex-shrink: 0;
-}
+  .about-icon {
+    flex-shrink: 0;
+  }
 
-.about-text h2 {
-font-size: 14px;
-font-weight: bold;
-color: #000;
-margin-bottom: 8px;
-}
+  .about-text h2 {
+    font-size: 14px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 8px;
+  }
 
-.about-text p {
-font-size: 12px;
-color: #333;
-margin-bottom: 3px;
-line-height: 1.5;
-}
+  .about-text p {
+    font-size: 12px;
+    color: #333;
+    margin-bottom: 3px;
+    line-height: 1.5;
+  }
 
-.about-divider {
-border: none;
-border-top: 1px solid #aaa;
-margin: 10px 0;
-}
+  .about-divider {
+    border: none;
+    border-top: 1px solid #aaa;
+    margin: 10px 0;
+  }
 
-.about-license {
-font-size: 11px;
-color: #555;
-}
+  .about-license {
+    font-size: 11px;
+    color: #555;
+  }
 
-.about-footer {
-padding: 8px 24px 16px;
-display: flex;
-justify-content: center;
-}
+  .about-footer {
+    padding: 8px 24px 16px;
+    display: flex;
+    justify-content: center;
+  }
 
-.about-ok-btn {
-background: #e1e1e1;
-border: 1px solid #aaa;
-padding: 4px 40px;
-font-size: 12px;
-font-family: ‘Segoe UI’, Tahoma, sans-serif;
-cursor: pointer;
-color: #000;
-}
+  .about-ok-btn {
+    background: #e1e1e1;
+    border: 1px solid #aaa;
+    padding: 4px 40px;
+    font-size: 12px;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    cursor: pointer;
+    color: #000;
+  }
 
-.about-ok-btn:hover { background: #cce4f7; border-color: #0078d7; }
-.about-ok-btn:active { background: #b8d8f0; }
+  .about-ok-btn:hover { background: #cce4f7; border-color: #0078d7; }
+  .about-ok-btn:active { background: #b8d8f0; }
 
-.terminal {
-flex: 1;
-overflow-y: auto;
-overflow-x: hidden;
-padding: 4px;
-background: #000;
-cursor: text;
-color: #c0c0c0;
-font-size: 14px;
-line-height: 1.3;
-}
+  .terminal {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 4px;
+    background: #000;
+    cursor: text;
+    color: #c0c0c0;
+    font-size: 14px;
+    line-height: 1.3;
+  }
 
-.terminal::-webkit-scrollbar { width: 12px; }
-.terminal::-webkit-scrollbar-track { background: #1a1a1a; }
-.terminal::-webkit-scrollbar-thumb { background: #555; border: 2px solid #1a1a1a; }
+  .terminal::-webkit-scrollbar { width: 12px; }
+  .terminal::-webkit-scrollbar-track { background: #1a1a1a; }
+  .terminal::-webkit-scrollbar-thumb { background: #555; border: 2px solid #1a1a1a; }
 
-.output-line {
-white-space: pre-wrap;
-word-break: break-all;
-color: #c0c0c0;
-}
+  .output-line {
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #c0c0c0;
+  }
 
-.output-line.error { color: #ff6b6b; }
-.output-line.system { color: #c0c0c0; }
+  .output-line.error { color: #ff6b6b; }
+  .output-line.system { color: #c0c0c0; }
 
-.input-line {
-display: flex;
-align-items: flex-start;
-}
+  .input-line {
+    display: flex;
+    align-items: flex-start;
+  }
 
-.prompt {
-color: #c0c0c0;
-white-space: nowrap;
-flex-shrink: 0;
-}
+  .prompt {
+    color: #c0c0c0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 
-.input-area {
-flex: 1;
-position: relative;
-display: inline-block;
-}
+  .input-area {
+    flex: 1;
+    position: relative;
+    display: inline-block;
+  }
 
-#cmd-input {
-background: transparent;
-border: none;
-outline: none;
-color: #c0c0c0;
-font-family: ‘Consolas’, ‘Courier New’, monospace;
-font-size: 14px;
-line-height: 1.3;
-width: 100%;
-caret-color: #c0c0c0;
-}
+  #cmd-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #c0c0c0;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.3;
+    width: 100%;
+    caret-color: #c0c0c0;
+  }
 
-.blink-cursor {
-display: inline-block;
-width: 8px;
-height: 14px;
-background: #c0c0c0;
-animation: blink 1s step-end infinite;
-vertical-align: text-bottom;
-margin-left: 1px;
-}
+  .blink-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #c0c0c0;
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 1px;
+  }
 
-@keyframes blink {
-0%, 100% { opacity: 1; }
-50% { opacity: 0; }
-}
-</style>
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
 
+  /* ── Fullscreen CMD window ── */
+  .window.cmd-fullscreen {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    border: none !important;
+    z-index: 100 !important;
+  }
+
+  /* ── Mobile toolbar ── */
+  .mobile-toolbar {
+    display: none;
+    background: #1a1a1a;
+    border-top: 1px solid #333;
+    padding: 4px 6px;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .mobile-toolbar { display: flex; }
+    .window {
+      width: 100vw !important;
+      height: 100vh !important;
+      position: fixed !important;
+      top: 0 !important; left: 0 !important;
+      border: none !important;
+      resize: none !important;
+    }
+    #cmd-input { font-size: 16px; }
+    .terminal { font-size: 13px; }
+  }
+
+  .mob-btn {
+    background: #2d2d2d;
+    border: 1px solid #555;
+    color: #c0c0c0;
+    font-size: 11px;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .mob-btn:active { background: #0078d7; color: #fff; }
+  .mob-btn.active { background: #0078d7; color: #fff; }
+
+  /* ── Notepad window ── */
+  .notepad-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 5000;
+    background: rgba(0,0,0,0.3);
+  }
+  .notepad-overlay.visible { display: block; }
+
+  .notepad-window {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 640px; height: 480px;
+    min-width: 320px; min-height: 200px;
+    background: #fff;
+    border: 1px solid #aaa;
+    box-shadow: 3px 3px 12px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    resize: both;
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .notepad-window {
+      width: 100vw !important; height: 100vh !important;
+      top: 0 !important; left: 0 !important;
+      transform: none !important;
+      position: fixed !important;
+      resize: none !important;
+    }
+  }
+
+  .notepad-titlebar {
+    background: linear-gradient(to bottom, #0a3a6e, #073060);
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 0 8px;
+    flex-shrink: 0;
+    cursor: default;
+    user-select: none;
+  }
+
+  .notepad-titlebar-title {
+    color: #fff;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .notepad-titlebar-btns { display: flex; height: 100%; }
+
+  .notepad-tb-btn {
+    width: 46px; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 10px; cursor: pointer;
+  }
+  .notepad-tb-btn:hover { background: rgba(255,255,255,0.15); }
+  .notepad-tb-btn.close:hover { background: #e81123; }
+
+  .notepad-menubar {
+    background: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    padding: 2px 4px;
+    display: flex;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .np-menu {
+    font-size: 12px;
+    padding: 2px 8px;
+    cursor: default;
+    user-select: none;
+    position: relative;
+    color: #000;
+  }
+  .np-menu:hover, .np-menu.active { background: #d0e8f8; }
+
+  .np-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%; left: 0;
+    background: #f9f9f9;
+    border: 1px solid #aaa;
+    min-width: 200px;
+    z-index: 6000;
+    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+  }
+  .np-menu.active .np-dropdown { display: block; }
+
+  .np-item {
+    font-size: 12px;
+    padding: 5px 20px 5px 24px;
+    cursor: default;
+    user-select: none;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    white-space: nowrap;
+  }
+  .np-item:hover { background: #0078d7; color: #fff; }
+  .np-item.disabled { color: #aaa; pointer-events: none; }
+  .np-sep { height: 1px; background: #ccc; margin: 3px 2px; }
+
+  .np-shortcut { color: #666; font-size: 11px; }
+  .np-item:hover .np-shortcut { color: #ddd; }
+
+  .notepad-textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    padding: 4px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #000;
+    background: #fff;
+  }
+
+  .notepad-statusbar {
+    background: #f0f0f0;
+    border-top: 1px solid #ccc;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: #444;
+    display: flex;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+
+  .notepad-mobile-toolbar {
+    display: none;
+    background: #e8e8e8;
+    border-top: 1px solid #ccc;
+    padding: 4px 6px;
+    gap: 4px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+  }
+  @media (max-width: 768px), (pointer: coarse) {
+    .notepad-mobile-toolbar { display: flex; }
+  }
+  .np-mob-btn {
+    background: #d8d8d8;
+    border: 1px solid #aaa;
+    color: #000;
+    font-size: 11px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+    user-select: none;
+  }
+  .np-mob-btn:active { background: #0078d7; color: #fff; }</style>
 </head>
 <body>
 <div class="window" id="window">
@@ -404,11 +614,12 @@ margin-left: 1px;
   </div>
 
   <!-- Hidden file input for .bat upload -->
-
   <input type="file" id="bat-file-input" accept=".bat,.cmd" style="display:none" onchange="handleBatUpload(event)" />
+  <!-- Hidden file input for upload command -->
+  <input type="file" id="upload-file-input" style="display:none" onchange="handleUploadFile(event)" />
+  <input type="file" id="upload-dir-input" webkitdirectory style="display:none" onchange="handleUploadDir(event)" />
 
   <!-- About window -->
-
   <div class="about-overlay" id="about-overlay" onclick="handleOverlayClick(event)">
     <div class="about-window" id="about-window">
       <div class="about-titlebar">
@@ -429,13 +640,13 @@ margin-left: 1px;
         </div>
         <div class="about-text">
           <h2>Windows CMD Simulator</h2>
-          <p><b>Version 1.0.0</b></p>
+          <p><b>Version 1.1.0</b></p>
           <p>Microsoft Windows [Version 10.0.19045.3930]</p>
           <hr class="about-divider">
           <p>Built with pure HTML, CSS &amp; JavaScript.</p>
           <p>No frameworks. No dependencies.</p>
           <hr class="about-divider">
-          <p class="about-license">© 2026 ProWin Team. MIT License.</p>
+          <p class="about-license">© 2026 prowindows4554. MIT License.</p>
           <p class="about-license">
             <a href="https://github.com/prowindows4554-offical/cmd-simulator"
                target="_blank"
@@ -450,6 +661,84 @@ margin-left: 1px;
       </div>
     </div>
   </div>
+
+  <!-- Notepad window -->
+  <div class="notepad-overlay" id="notepad-overlay">
+    <div class="notepad-window" id="notepad-window">
+      <div class="notepad-titlebar" id="notepad-titlebar">
+        <div class="notepad-titlebar-title">
+          <svg width="14" height="14" viewBox="0 0 16 16"><rect width="16" height="16" fill="#fff"/><rect x="2" y="1" width="12" height="14" fill="#fffde7" stroke="#aaa"/><line x1="4" y1="5" x2="12" y2="5" stroke="#aaa" stroke-width="1"/><line x1="4" y1="8" x2="12" y2="8" stroke="#aaa" stroke-width="1"/><line x1="4" y1="11" x2="9" y2="11" stroke="#aaa" stroke-width="1"/></svg>
+          <span id="notepad-title">Untitled — Notepad</span>
+        </div>
+        <div class="notepad-titlebar-btns">
+          <div class="notepad-tb-btn" onclick="minimizeNotepad()">&#8722;</div>
+          <div class="notepad-tb-btn" onclick="maximizeNotepad()">&#9633;</div>
+          <div class="notepad-tb-btn close" onclick="closeNotepad()">&#10005;</div>
+        </div>
+      </div>
+      <div class="notepad-menubar" id="notepad-menubar">
+        <div class="np-menu" id="np-file" onclick="toggleNpMenu('np-file')">File
+          <div class="np-dropdown">
+            <div class="np-item" onclick="npNew()">New<span class="np-shortcut">Ctrl+N</span></div>
+            <div class="np-item" onclick="npOpen()">Open...<span class="np-shortcut">Ctrl+O</span></div>
+            <div class="np-sep"></div>
+            <div class="np-item" onclick="npSave()">Save<span class="np-shortcut">Ctrl+S</span></div>
+            <div class="np-item" onclick="npSaveAs()">Save As...<span class="np-shortcut">Ctrl+Shift+S</span></div>
+            <div class="np-sep"></div>
+            <div class="np-item" onclick="npDownload()">Download<span class="np-shortcut">Ctrl+D</span></div>
+            <div class="np-sep"></div>
+            <div class="np-item" onclick="closeNotepad()">Exit</div>
+          </div>
+        </div>
+        <div class="np-menu" id="np-edit" onclick="toggleNpMenu('np-edit')">Edit
+          <div class="np-dropdown">
+            <div class="np-item" onclick="npUndo()">Undo<span class="np-shortcut">Ctrl+Z</span></div>
+            <div class="np-sep"></div>
+            <div class="np-item" onclick="document.getElementById('notepad-ta').execCommand&&document.execCommand('cut')">Cut<span class="np-shortcut">Ctrl+X</span></div>
+            <div class="np-item" onclick="document.execCommand('copy')">Copy<span class="np-shortcut">Ctrl+C</span></div>
+            <div class="np-item" onclick="document.execCommand('paste')">Paste<span class="np-shortcut">Ctrl+V</span></div>
+            <div class="np-item" onclick="npSelectAll()">Select All<span class="np-shortcut">Ctrl+A</span></div>
+            <div class="np-sep"></div>
+            <div class="np-item" onclick="npFind()">Find...<span class="np-shortcut">Ctrl+F</span></div>
+            <div class="np-item" onclick="npReplace()">Replace...<span class="np-shortcut">Ctrl+H</span></div>
+            <div class="np-item" onclick="npGoTo()">Go To...<span class="np-shortcut">Ctrl+G</span></div>
+          </div>
+        </div>
+        <div class="np-menu" id="np-format" onclick="toggleNpMenu('np-format')">Format
+          <div class="np-dropdown">
+            <div class="np-item" onclick="npToggleWordWrap()">Word Wrap</div>
+            <div class="np-item disabled">Font...</div>
+          </div>
+        </div>
+        <div class="np-menu" id="np-view" onclick="toggleNpMenu('np-view')">View
+          <div class="np-dropdown">
+            <div class="np-item" onclick="npToggleStatusBar()">Status Bar</div>
+          </div>
+        </div>
+        <div class="np-menu" id="np-help" onclick="toggleNpMenu('np-help')">Help
+          <div class="np-dropdown">
+            <div class="np-item" onclick="alert('Windows CMD Simulator — Notepad\nv1.1.0\n© 2026 prowindows4554')">About Notepad</div>
+          </div>
+        </div>
+      </div>
+      <textarea id="notepad-ta" class="notepad-textarea" spellcheck="false" oninput="npMarkDirty()" onkeydown="npKeyDown(event)"></textarea>
+      <div class="notepad-mobile-toolbar">
+        <button class="np-mob-btn" onclick="npSave()">💾 Save</button>
+        <button class="np-mob-btn" onclick="npDownload()">⬇ Download</button>
+        <button class="np-mob-btn" onclick="npSelectAll()">Select All</button>
+        <button class="np-mob-btn" onclick="npUndo()">Undo</button>
+        <button class="np-mob-btn" onclick="npFind()">Find</button>
+        <button class="np-mob-btn" onclick="closeNotepad()">✕ Close</button>
+      </div>
+      <div class="notepad-statusbar" id="notepad-statusbar">
+        <span id="np-pos">Ln 1, Col 1</span>
+        <span id="np-chars">0 characters</span>
+        <span>UTF-8</span>
+        <span>Windows (CRLF)</span>
+      </div>
+    </div>
+  </div>
+
   <div class="terminal" id="terminal" onclick="focusInput()">
     <div id="output"></div>
     <div class="input-line" id="input-line">
@@ -458,6 +747,22 @@ margin-left: 1px;
         <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" />
       </div>
     </div>
+  </div>
+
+  <!-- Mobile toolbar -->
+  <div class="mobile-toolbar" id="mobile-toolbar">
+    <button class="mob-btn" id="mob-ctrl" onclick="mobToggle('ctrl')">Ctrl</button>
+    <button class="mob-btn" id="mob-alt" onclick="mobToggle('alt')">Alt</button>
+    <button class="mob-btn" id="mob-shift" onclick="mobToggle('shift')">Shift</button>
+    <button class="mob-btn" onclick="mobSendKey('Escape')">Esc</button>
+    <button class="mob-btn" onclick="mobSendKey('Tab')">Tab</button>
+    <button class="mob-btn" onclick="mobSendKey('ArrowUp')">↑</button>
+    <button class="mob-btn" onclick="mobSendKey('ArrowDown')">↓</button>
+    <button class="mob-btn" onclick="mobSendKey('ArrowLeft')">←</button>
+    <button class="mob-btn" onclick="mobSendKey('ArrowRight')">→</button>
+    <button class="mob-btn" onclick="mobSendKey('Enter')">↵</button>
+    <button class="mob-btn" onclick="mobSendKey('Backspace')">⌫</button>
+    <button class="mob-btn" onclick="output.innerHTML=''">CLS</button>
   </div>
 </div>
 
@@ -714,6 +1019,10 @@ function processCommand(input) {
     case 'tasklist': cmdTasklist(); break;
     case 'netstat': cmdNetstat(); break;
     case 'tree': cmdTree(args); break;
+    case 'notepad': cmdNotepad(args); break;
+    case 'download': cmdDownload(args); break;
+    case 'upload': cmdUpload(args); break;
+    case 'mount': cmdMount(args); break;
     case 'attrib': print(''); break;
     case 'find': cmdFind(args, raw); break;
     case 'more': print('--- More ---'); break;
@@ -1760,8 +2069,582 @@ function executeBat(content) {
   }
 }
 
+// ── CMD Fullscreen (Alt+Enter) ────────────────────────────────
+let cmdFullscreen = false;
+document.addEventListener('keydown', function(e) {
+  if (e.altKey && e.key === 'Enter') {
+    e.preventDefault();
+    toggleCmdFullscreen();
+  }
+});
+
+function toggleCmdFullscreen() {
+  cmdFullscreen = !cmdFullscreen;
+  if (cmdFullscreen) {
+    win.classList.add('cmd-fullscreen');
+  } else {
+    win.classList.remove('cmd-fullscreen');
+  }
+  focusInput();
+}
+
+// ── Auto fullscreen on load ───────────────────────────────────
+window.addEventListener('load', function() {
+  // Small delay to ensure page renders first
+  setTimeout(function() {
+    toggleCmdFullscreen();
+  }, 100);
+});
+
+// ── Mobile toolbar ────────────────────────────────────────────
+let mobModifiers = { ctrl: false, alt: false, shift: false };
+
+function mobToggle(mod) {
+  mobModifiers[mod] = !mobModifiers[mod];
+  document.getElementById('mob-' + mod).classList.toggle('active', mobModifiers[mod]);
+}
+
+function mobSendKey(key) {
+  cmdInput.focus();
+  const event = new KeyboardEvent('keydown', {
+    key: key,
+    ctrlKey: mobModifiers.ctrl,
+    altKey: mobModifiers.alt,
+    shiftKey: mobModifiers.shift,
+    bubbles: true
+  });
+  cmdInput.dispatchEvent(event);
+  // Reset modifiers after use
+  mobModifiers = { ctrl: false, alt: false, shift: false };
+  document.querySelectorAll('.mob-btn.active').forEach(b => b.classList.remove('active'));
+}
+
+// ── Notepad ───────────────────────────────────────────────────
+let npCurrentFile = null;
+let npDirty = false;
+let npNpMenuOpen = null;
+
+function cmdNotepad(args) {
+  const filename = args && args[0] ? args[0] : null;
+  openNotepad(filename);
+}
+
+function openNotepad(filename) {
+  const overlay = document.getElementById('notepad-overlay');
+  const ta = document.getElementById('notepad-ta');
+
+  if (filename) {
+    const filePath = normalizePath(filename);
+    const parts = filePath.split('\\');
+    const fname = parts.pop();
+    const dir = getDirNode(parts.join('\\'));
+    if (dir && dir.children && dir.children[fname] && dir.children[fname].type === 'file') {
+      ta.value = dir.children[fname].content || '';
+      npCurrentFile = filePath;
+      setNotepadTitle(fname);
+    } else {
+      // New file
+      ta.value = '';
+      npCurrentFile = filePath;
+      setNotepadTitle(fname + ' (new)');
+    }
+  } else {
+    ta.value = '';
+    npCurrentFile = null;
+    setNotepadTitle('Untitled');
+  }
+
+  npDirty = false;
+  overlay.classList.add('visible');
+  ta.focus();
+  npUpdateStatus();
+}
+
+function setNotepadTitle(name) {
+  document.getElementById('notepad-title').textContent = name + ' — Notepad';
+}
+
+function npMarkDirty() {
+  if (!npDirty) {
+    npDirty = true;
+    const title = document.getElementById('notepad-title').textContent;
+    if (!title.startsWith('*')) {
+      document.getElementById('notepad-title').textContent = '*' + title;
+    }
+  }
+  npUpdateStatus();
+}
+
+function npUpdateStatus() {
+  const ta = document.getElementById('notepad-ta');
+  const text = ta.value;
+  const pos = ta.selectionStart;
+  const lines = text.substring(0, pos).split('\n');
+  const ln = lines.length;
+  const col = lines[lines.length - 1].length + 1;
+  document.getElementById('np-pos').textContent = 'Ln ' + ln + ', Col ' + col;
+  document.getElementById('np-chars').textContent = text.length + ' characters';
+}
+
+function toggleNpMenu(id) {
+  document.querySelectorAll('.np-menu').forEach(m => {
+    if (m.id === id) m.classList.toggle('active');
+    else m.classList.remove('active');
+  });
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.np-menu')) {
+    document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  }
+});
+
+function npKeyDown(e) {
+  if (e.ctrlKey) {
+    switch(e.key.toLowerCase()) {
+      case 's': e.preventDefault(); npSave(); break;
+      case 'n': e.preventDefault(); npNew(); break;
+      case 'o': e.preventDefault(); npOpen(); break;
+      case 'd': e.preventDefault(); npDownload(); break;
+      case 'z': e.preventDefault(); npUndo(); break;
+      case 'a': e.preventDefault(); npSelectAll(); break;
+      case 'f': e.preventDefault(); npFind(); break;
+      case 'h': e.preventDefault(); npReplace(); break;
+      case 'g': e.preventDefault(); npGoTo(); break;
+    }
+  }
+  setTimeout(npUpdateStatus, 0);
+}
+
+function npNew() {
+  if (npDirty && !confirm('Discard changes?')) return;
+  document.getElementById('notepad-ta').value = '';
+  npCurrentFile = null;
+  npDirty = false;
+  setNotepadTitle('Untitled');
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+}
+
+function npSave() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  if (!npCurrentFile) { npSaveAs(); return; }
+  const content = document.getElementById('notepad-ta').value;
+  const parts = npCurrentFile.split('\\');
+  const fname = parts.pop();
+  const dirPath = parts.join('\\');
+  const dir = getDirNode(dirPath);
+  if (dir) {
+    if (!dir.children) dir.children = {};
+    dir.children[fname] = { type: 'file', content: content, size: content.length, date: new Date().toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'}) + '  ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'}) };
+    npDirty = false;
+    setNotepadTitle(fname);
+  }
+}
+
+function npSaveAs() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  const name = prompt('Save as:', npCurrentFile ? npCurrentFile.split('\\').pop() : 'untitled.txt');
+  if (!name) return;
+  npCurrentFile = currentDir + '\\' + name;
+  npSave();
+}
+
+function npOpen() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  const path = prompt('Open file:', currentDir + '\\');
+  if (!path) return;
+  const parts = normalizePath(path).split('\\');
+  const fname = parts.pop();
+  const dir = getDirNode(parts.join('\\'));
+  if (dir && dir.children && dir.children[fname]) {
+    document.getElementById('notepad-ta').value = dir.children[fname].content || '';
+    npCurrentFile = normalizePath(path);
+    npDirty = false;
+    setNotepadTitle(fname);
+  } else {
+    alert('File not found: ' + path);
+  }
+}
+
+function npDownload() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  const content = document.getElementById('notepad-ta').value;
+  const fname = npCurrentFile ? npCurrentFile.split('\\').pop() : 'untitled.txt';
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = fname;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function npUndo() {
+  document.getElementById('notepad-ta').focus();
+  document.execCommand('undo');
+}
+
+function npSelectAll() {
+  const ta = document.getElementById('notepad-ta');
+  ta.select();
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+}
+
+function npFind() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  const q = prompt('Find:');
+  if (!q) return;
+  const ta = document.getElementById('notepad-ta');
+  const idx = ta.value.indexOf(q, ta.selectionEnd);
+  if (idx >= 0) {
+    ta.setSelectionRange(idx, idx + q.length);
+    ta.focus();
+  } else {
+    alert('Cannot find "' + q + '"');
+  }
+}
+
+function npReplace() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  const q = prompt('Find:');
+  if (!q) return;
+  const r = prompt('Replace with:');
+  if (r === null) return;
+  const ta = document.getElementById('notepad-ta');
+  ta.value = ta.value.split(q).join(r);
+  npMarkDirty();
+}
+
+function npGoTo() {
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+  const ln = parseInt(prompt('Line number:'));
+  if (isNaN(ln)) return;
+  const ta = document.getElementById('notepad-ta');
+  const lines = ta.value.split('\n');
+  let pos = 0;
+  for (let i = 0; i < Math.min(ln - 1, lines.length); i++) pos += lines[i].length + 1;
+  ta.setSelectionRange(pos, pos);
+  ta.focus();
+}
+
+function npToggleWordWrap() {
+  const ta = document.getElementById('notepad-ta');
+  ta.style.whiteSpace = ta.style.whiteSpace === 'nowrap' ? '' : 'nowrap';
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+}
+
+function npToggleStatusBar() {
+  const sb = document.getElementById('notepad-statusbar');
+  sb.style.display = sb.style.display === 'none' ? '' : 'none';
+  document.querySelectorAll('.np-menu').forEach(m => m.classList.remove('active'));
+}
+
+function closeNotepad() {
+  if (npDirty && !confirm('Discard unsaved changes?')) return;
+  document.getElementById('notepad-overlay').classList.remove('visible');
+  focusInput();
+}
+
+function minimizeNotepad() {
+  document.getElementById('notepad-overlay').classList.remove('visible');
+}
+
+function maximizeNotepad() {
+  const nw = document.getElementById('notepad-window');
+  if (nw.style.width === '100vw') {
+    nw.style.cssText = '';
+  } else {
+    nw.style.cssText = 'width:100vw;height:100vh;top:0;left:0;transform:none;position:fixed;';
+  }
+}
+
+// Drag notepad
+(function() {
+  let dragging = false, offX = 0, offY = 0;
+  const tb = document.getElementById('notepad-titlebar');
+  const nw = document.getElementById('notepad-window');
+  tb.addEventListener('mousedown', function(e) {
+    dragging = true;
+    const r = nw.getBoundingClientRect();
+    offX = e.clientX - r.left;
+    offY = e.clientY - r.top;
+    nw.style.transform = 'none';
+    document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    nw.style.left = (e.clientX - offX) + 'px';
+    nw.style.top = (e.clientY - offY) + 'px';
+  });
+  document.addEventListener('mouseup', function() {
+    dragging = false;
+    document.body.style.userSelect = '';
+  });
+})();
+
+// ── download command ──────────────────────────────────────────
+function cmdDownload(args) {
+  if (!args || !args.length) { print('Usage: download <filename>'); return; }
+  const target = normalizePath(args[0]);
+  const parts = target.split('\\');
+  const name = parts.pop();
+  const dir = getDirNode(parts.join('\\'));
+
+  if (!dir) { print(t.pathNotFound); return; }
+
+  // Check if file
+  if (dir.children && dir.children[name] && dir.children[name].type === 'file') {
+    const file = dir.children[name];
+    const blob = new Blob([file.content || ''], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    print('Downloading ' + name + '...');
+    return;
+  }
+
+  // Check if directory — zip it
+  if (dir.children && dir.children[name] && dir.children[name].type === 'dir') {
+    downloadDirAsZip(dir.children[name], name);
+    return;
+  }
+
+  print(t.fileNotFound);
+}
+
+function downloadDirAsZip(dirNode, dirName) {
+  // Simple ZIP implementation without external libs
+  print('Compressing ' + dirName + '...');
+  const files = [];
+  collectFiles(dirNode, dirName, files);
+
+  // Build ZIP file manually
+  const zipBytes = buildZip(files);
+  const blob = new Blob([zipBytes], { type: 'application/zip' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = dirName + '.zip';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  print('Downloaded ' + dirName + '.zip (' + files.length + ' files)');
+}
+
+function collectFiles(node, path, result) {
+  if (!node.children) return;
+  for (const [name, child] of Object.entries(node.children)) {
+    const fullPath = path + '/' + name;
+    if (child.type === 'file') {
+      result.push({ path: fullPath, content: child.content || '' });
+    } else if (child.type === 'dir') {
+      collectFiles(child, fullPath, result);
+    }
+  }
+}
+
+function buildZip(files) {
+  // Minimal ZIP builder
+  const enc = new TextEncoder();
+  const localHeaders = [];
+  const centralDir = [];
+  let offset = 0;
+
+  for (const f of files) {
+    const nameBytes = enc.encode(f.path);
+    const dataBytes = enc.encode(f.content);
+    const crc = crc32(dataBytes);
+    const local = new Uint8Array(30 + nameBytes.length + dataBytes.length);
+    const view = new DataView(local.buffer);
+    view.setUint32(0, 0x04034b50, true); // sig
+    view.setUint16(4, 20, true); // version
+    view.setUint16(6, 0, true); // flags
+    view.setUint16(8, 0, true); // compression (store)
+    view.setUint32(14, crc, true);
+    view.setUint32(18, dataBytes.length, true);
+    view.setUint32(22, dataBytes.length, true);
+    view.setUint16(26, nameBytes.length, true);
+    local.set(nameBytes, 30);
+    local.set(dataBytes, 30 + nameBytes.length);
+    localHeaders.push(local);
+
+    const cd = new Uint8Array(46 + nameBytes.length);
+    const cdv = new DataView(cd.buffer);
+    cdv.setUint32(0, 0x02014b50, true);
+    cdv.setUint16(4, 20, true);
+    cdv.setUint16(6, 20, true);
+    cdv.setUint32(16, crc, true);
+    cdv.setUint32(20, dataBytes.length, true);
+    cdv.setUint32(24, dataBytes.length, true);
+    cdv.setUint16(28, nameBytes.length, true);
+    cdv.setUint32(42, offset, true);
+    cd.set(nameBytes, 46);
+    centralDir.push(cd);
+    offset += local.length;
+  }
+
+  const cdSize = centralDir.reduce((a, b) => a + b.length, 0);
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, cdSize, true);
+  ev.setUint32(16, offset, true);
+
+  const total = [...localHeaders, ...centralDir, eocd].reduce((a, b) => a + b.length, 0);
+  const out = new Uint8Array(total);
+  let pos = 0;
+  for (const b of [...localHeaders, ...centralDir, eocd]) {
+    out.set(b, pos); pos += b.length;
+  }
+  return out;
+}
+
+function crc32(data) {
+  let crc = 0xFFFFFFFF;
+  for (let i = 0; i < data.length; i++) {
+    crc ^= data[i];
+    for (let j = 0; j < 8; j++) {
+      crc = (crc & 1) ? (crc >>> 1) ^ 0xEDB88320 : crc >>> 1;
+    }
+  }
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+// ── upload command ────────────────────────────────────────────
+let uploadPendingName = null;
+let uploadPendingDest = null;
+
+function cmdUpload(args) {
+  if (!args || !args.length) {
+    print('Usage: upload [name] [destination]');
+    print('       upload file.txt');
+    print('       upload file.txt C:\\Users\\User\\Desktop');
+    return;
+  }
+  uploadPendingName = args[0] || null;
+  uploadPendingDest = args[1] ? normalizePath(args[1]) : currentDir;
+  document.getElementById('upload-file-input').click();
+}
+
+function handleUploadFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const content = e.target.result;
+    const destName = uploadPendingName || file.name;
+    const destDir = getDirNode(uploadPendingDest);
+    if (!destDir) { print(t.pathNotFound); return; }
+    if (!destDir.children) destDir.children = {};
+    destDir.children[destName] = {
+      type: 'file',
+      content: content,
+      size: content.length,
+      date: new Date().toLocaleDateString('en-US', {month:'2-digit',day:'2-digit',year:'numeric'}) + '  ' + new Date().toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit'})
+    };
+    print('File imported: ' + uploadPendingDest + '\\' + destName);
+    printBlank();
+    scrollToBottom();
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function handleUploadDir(event) {
+  const files = event.target.files;
+  if (!files.length) return;
+  const baseDir = files[0].webkitRelativePath.split('/')[0];
+  const destName = uploadPendingName || baseDir;
+  const destDir = getDirNode(uploadPendingDest);
+  if (!destDir) { print(t.pathNotFound); return; }
+  if (!destDir.children) destDir.children = {};
+
+  let count = 0;
+  let pending = files.length;
+
+  for (const file of files) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const parts = file.webkitRelativePath.split('/');
+      parts[0] = destName;
+      let node = destDir;
+      for (let i = 0; i < parts.length - 1; i++) {
+        if (!node.children[parts[i]]) node.children[parts[i]] = { type: 'dir', children: {} };
+        node = node.children[parts[i]];
+      }
+      const fname = parts[parts.length - 1];
+      node.children[fname] = { type: 'file', content: e.target.result, size: e.target.result.length, date: new Date().toLocaleDateString() };
+      count++;
+      pending--;
+      if (pending === 0) {
+        print('Folder imported: ' + uploadPendingDest + '\\' + destName + ' (' + count + ' files)');
+        printBlank();
+        scrollToBottom();
+      }
+    };
+    reader.readAsText(file);
+  }
+  event.target.value = '';
+}
+
+// ── mount command ─────────────────────────────────────────────
+const mountedDrives = {};
+
+function cmdMount(args) {
+  if (!args || args.length < 2) {
+    print('Usage: mount <drive:> <filename>');
+    print('       mount Z:\\ myfile.txt');
+    print('       mount Z:\\ myfolder');
+    printBlank();
+    if (Object.keys(mountedDrives).length) {
+      print('Mounted drives:');
+      for (const [drive, info] of Object.entries(mountedDrives)) {
+        print('  ' + drive + '  ->  ' + info.name);
+      }
+    }
+    return;
+  }
+
+  const driveArg = args[0].toUpperCase().replace('\\', '');
+  const sourceName = args[1];
+
+  // Validate drive letter format
+  if (!/^[A-Z]:$/.test(driveArg)) {
+    print('Invalid drive letter: ' + args[0]);
+    return;
+  }
+
+  // Find the file/folder in current dir
+  const sourcePath = currentDir + '\\' + sourceName;
+  const parts = sourcePath.split('\\');
+  const fname = parts.pop();
+  const dir = getDirNode(parts.join('\\'));
+
+  if (!dir || !dir.children || !dir.children[fname]) {
+    print(t.fileNotFound);
+    return;
+  }
+
+  // Mount it as a new drive
+  const node = dir.children[fname];
+  if (node.type === 'file') {
+    // Mount file as single-file drive
+    fileSystem[driveArg] = {
+      type: 'dir',
+      children: { [fname]: node }
+    };
+  } else {
+    // Mount folder as drive root
+    fileSystem[driveArg] = node;
+  }
+
+  mountedDrives[driveArg] = { name: sourceName };
+  print('Drive ' + driveArg + '\\ mounted successfully.');
+  print('Type "' + driveArg + '\\" to access it.');
+}
+
 init();
 </script>
-
 </body>
 </html>
