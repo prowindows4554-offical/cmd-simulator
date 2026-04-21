@@ -8,11 +8,12 @@
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
 <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/Версия-1.1.0-blue?style=for-the-badge" />
 <img src="https://img.shields.io/badge/Лицензия-MIT-green?style=for-the-badge" />
 
 **Реалистичный симулятор командной строки Windows (cmd.exe) прямо в браузере**
 
-[🚀 Открыть демо](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Сообщить об ошибке](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [✨ Предложить функцию](https://github.com/prowindows4554-offical/cmd-simulator/issues)
+[🚀 Открыть демо](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Сообщить об ошибке](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [💬 Обсуждения](https://github.com/prowindows4554-offical/cmd-simulator/discussions)
 
 </div>
 
@@ -27,6 +28,13 @@
 - 🔤 **Автодополнение Tab** — как в настоящем терминале
 - 🎨 **Команда `color`** — смена цвета фона и текста (16 вариантов)
 - 🪟 **Управление окном** — перетаскивание, разворот, свёртывание, закрытие
+- 📝 **Блокнот (Notepad)** — полноценный блокнот с сохранением, скачиванием, поиском и горячими клавишами
+- 📥 **Команда `download`** — скачать файл или папку (как ZIP) из виртуальной ФС
+- 📤 **Команда `upload`** — импорт реальных файлов в виртуальную файловую систему
+- 💾 **Команда `mount`** — монтировать файл или папку как виртуальный диск
+- 🌐 **5 языков** — English, Русский, Español, Français, 中文
+- 📱 **Мобильная версия** — автополноэкранный режим + тулбар с клавишами
+- ⛶ **Полноэкранный режим** — Alt+Enter переключает CMD в полноэкранный режим
 - 📦 **Без зависимостей** — один файл, никаких библиотек
 
 -----
@@ -176,6 +184,6 @@ cmd-simulator/
 
 <div align="center">
 
-Сделано с ❤️ командой [ProWin Team](https://github.com/prowindows4554-offical) | Поставьте ⭐ если понравилось!
+Сделано с ❤️ пользователем [prowindows4554](https://github.com/prowindows4554-offical) | Поставьте ⭐ если понравилось!
 
 </div>
