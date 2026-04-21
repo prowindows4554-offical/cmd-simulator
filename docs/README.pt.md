@@ -6,13 +6,14 @@
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
 <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/Version-1.1.0-blue?style=for-the-badge" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 
 🌐 Idioma: [English](https://github.com/prowindows4554-offical/cmd-simulator?tab=readme-ov-file) · [Français](README.fr.md) · **Português** · [Қазақша](README.kk.md) · [Русский](README.ru.md)
 
 **Um simulador realista do Prompt de Comando do Windows (cmd.exe) diretamente no seu navegador**
 
-[🚀 Demo ao vivo](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Reportar bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [✨ Sugerir funcionalidade](https://github.com/prowindows4554-offical/cmd-simulator/issues)
+[🚀 Demo ao vivo](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Reportar bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [💬 Discussões](https://github.com/prowindows4554-offical/cmd-simulator/discussions)
 
 </div>
 
@@ -27,6 +28,13 @@
 - 🔤 **Autocompletar com Tab** — igual ao terminal real
 - 🎨 **Comando `color`** — mudar cor do fundo e do texto (16 opções)
 - 🪟 **Controles de janela** — arrastar, maximizar, minimizar, fechar
+- 📝 **Bloco de notas** — Notepad completo com salvar, baixar, buscar e atalhos
+- 📥 **Comando `download`** — baixar arquivo ou pasta (como ZIP)
+- 📤 **Comando `upload`** — importar arquivos reais para o sistema de arquivos virtual
+- 💾 **Comando `mount`** — montar arquivo ou pasta como unidade virtual
+- 🌐 **5 idiomas** — English, Русский, Español, Français, 中文
+- 📱 **Mobile friendly** — tela cheia automática + barra de teclado
+- ⛶ **Modo tela cheia** — Alt+Enter alterna o CMD para tela cheia
 - 📦 **Zero dependências** — arquivo único, sem bibliotecas
 
 -----
@@ -175,6 +183,6 @@ Distribuído sob a **Licença MIT**. Veja [LICENSE](../LICENSE) para detalhes.
 
 <div align="center">
 
-Feito com ❤️ por [ProWin Team](https://github.com/prowindows4554-offical) | Dê uma ⭐ se gostar!
+Feito com ❤️ por [prowindows4554](https://github.com/prowindows4554-offical) | Dê uma ⭐ se gostar!
 
 </div>
