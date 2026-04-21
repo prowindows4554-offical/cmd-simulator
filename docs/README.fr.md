@@ -6,13 +6,14 @@
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
 <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/Version-1.1.0-blue?style=for-the-badge" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 
 🌐 Langue : [English](https://github.com/prowindows4554-offical/cmd-simulator?tab=readme-ov-file) · **Français** · [Português](README.pt.md) · [Қазақша](README.kk.md) · [Русский](README.ru.md)
 
 **Un simulateur réaliste de l’invite de commandes Windows (cmd.exe) directement dans votre navigateur**
 
-[🚀 Démo en ligne](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Signaler un bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [✨ Proposer une fonctionnalité](https://github.com/prowindows4554-offical/cmd-simulator/issues)
+[🚀 Démo en ligne](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Signaler un bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [💬 Discussions](https://github.com/prowindows4554-offical/cmd-simulator/discussions)
 
 </div>
 
@@ -27,6 +28,13 @@
 - 🔤 **Autocomplétion Tab** — comme dans le vrai terminal
 - 🎨 **Commande `color`** — changer la couleur du fond et du texte (16 options)
 - 🪟 **Contrôles de fenêtre** — déplacer, agrandir, réduire, fermer
+- 📝 **Bloc-notes** — Notepad complet avec sauvegarde, téléchargement, recherche et raccourcis
+- 📥 **Commande `download`** — télécharger un fichier ou un dossier (en ZIP)
+- 📤 **Commande `upload`** — importer de vrais fichiers dans le système de fichiers virtuel
+- 💾 **Commande `mount`** — monter un fichier ou dossier comme lecteur virtuel
+- 🌐 **5 langues** — English, Русский, Español, Français, 中文
+- 📱 **Compatible mobile** — plein écran auto + barre d’outils clavier
+- ⛶ **Mode plein écran** — Alt+Entrée bascule CMD en plein écran
 - 📦 **Zéro dépendance** — un seul fichier, aucune bibliothèque
 
 -----
@@ -175,6 +183,6 @@ Distribué sous la **licence MIT**. Voir [LICENSE](../LICENSE) pour les détails
 
 <div align="center">
 
-Fait avec ❤️ par [ProWin Team](https://github.com/prowindows4554-offical) | Donnez une ⭐ si vous aimez !
+Fait avec ❤️ par [prowindows4554](https://github.com/prowindows4554-offical) | Donnez une ⭐ si vous aimez !
 
 </div>
