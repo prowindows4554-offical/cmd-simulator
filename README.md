@@ -6,19 +6,18 @@
 <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" />
 <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" />
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img src="https://img.shields.io/badge/Version-1.1.0-blue?style=for-the-badge" />
 <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" />
 
-🌐 Language: **English** · [Français](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.fr.md) · [Português](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.pt.md) · [Қазақша](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.kk.md) · [Русский](https://github.com/prowindows4554-offical/cmd-simulator/blob/main/docs/README.ru.md)
-
+🌐 Language: **English** · [Français](docs/README.fr.md) · [Português](docs/README.pt.md) · [Қазақша](docs/README.kk.md) · [Русский](docs/README.ru.md)
 
 **A realistic Windows Command Prompt (cmd.exe) simulator running directly in your browser**
 
-[🚀 Live Demo](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Report a Bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [✨ Request a Feature](https://github.com/prowindows4554-offical/cmd-simulator/discussions)
-
+[🚀 Live Demo](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Report a Bug](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [💬 Discussions](https://github.com/prowindows4554-offical/cmd-simulator/discussions)
 
 </div>
 
------
+---
 
 ## ✨ Features
 
@@ -29,18 +28,23 @@
 - 🔤 **Tab autocomplete** — just like the real terminal
 - 🎨 **`color` command** — change background and text color (16 options)
 - 🪟 **Window controls** — drag, maximize, minimize, close
+- 📝 **Notepad** — fully realistic Notepad with save, download, find & replace, keyboard shortcuts
+- 📥 **`download`** command — download files or folders (as ZIP) from virtual FS
+- 📤 **`upload`** command — import real files into virtual file system
+- 💾 **`mount`** command — mount files or folders as virtual drives (e.g. `mount Z:\ myfolder`)
+- 🌐 **5 languages** — English, Русский, Español, Français, 中文
+- 📱 **Mobile friendly** — auto fullscreen + keyboard toolbar on mobile
+- ⛶ **Fullscreen mode** — Alt+Enter toggles CMD fullscreen
 - 📦 **Zero dependencies** — single file, no libraries needed
 
------
+---
 
 ## 🚀 Quick Start
 
 ### Option 1 — Open Online
-
-Just visit: **<https://prowindows4554-offical.github.io/cmd-simulator>**
+Just visit: **[https://prowindows4554-offical.github.io/cmd-simulator](https://prowindows4554-offical.github.io/cmd-simulator)**
 
 ### Option 2 — Run Locally
-
 ```bash
 git clone https://github.com/prowindows4554-offical/cmd-simulator.git
 cd cmd-simulator
@@ -50,77 +54,77 @@ start index.html      # Windows
 xdg-open index.html   # Linux
 ```
 
------
+---
 
 ## 📋 Supported Commands
 
 <details>
 <summary><b>📂 Files & Directories</b> (click to expand)</summary>
 
-|Command           |Description           |
-|------------------|----------------------|
-|`dir [path]`      |List files and folders|
-|`cd [path]`       |Change directory      |
-|`mkdir [name]`    |Create a directory    |
-|`rmdir [name]`    |Remove a directory    |
-|`del [file]`      |Delete a file         |
-|`copy [src] [dst]`|Copy a file           |
-|`move [src] [dst]`|Move a file           |
-|`ren [src] [dst]` |Rename a file         |
-|`type [file]`     |Show file contents    |
-|`tree [path]`     |Display directory tree|
+| Command | Description |
+|---------|-------------|
+| `dir [path]` | List files and folders |
+| `cd [path]` | Change directory |
+| `mkdir [name]` | Create a directory |
+| `rmdir [name]` | Remove a directory |
+| `del [file]` | Delete a file |
+| `copy [src] [dst]` | Copy a file |
+| `move [src] [dst]` | Move a file |
+| `ren [src] [dst]` | Rename a file |
+| `type [file]` | Show file contents |
+| `tree [path]` | Display directory tree |
 
 </details>
 
 <details>
 <summary><b>🖥️ System</b></summary>
 
-|Command         |Description                |
-|----------------|---------------------------|
-|`ver`           |Windows version            |
-|`systeminfo`    |Detailed system information|
-|`tasklist`      |List running processes     |
-|`chkdsk`        |Check disk integrity       |
-|`sfc`           |System file checker        |
-|`shutdown /s`   |Shut down                  |
-|`whoami`        |Current user               |
-|`hostname`      |Computer name              |
-|`set [variable]`|Environment variables      |
-|`date` / `time` |Show date and time         |
+| Command | Description |
+|---------|-------------|
+| `ver` | Windows version |
+| `systeminfo` | Detailed system information |
+| `tasklist` | List running processes |
+| `chkdsk` | Check disk integrity |
+| `sfc` | System file checker |
+| `shutdown /s` | Shut down |
+| `whoami` | Current user |
+| `hostname` | Computer name |
+| `set [variable]` | Environment variables |
+| `date` / `time` | Show date and time |
 
 </details>
 
 <details>
 <summary><b>🌐 Network</b></summary>
 
-|Command          |Description          |
-|-----------------|---------------------|
-|`ping [host]`    |Ping a host          |
-|`ipconfig`       |Network configuration|
-|`netstat`        |Active connections   |
-|`tracert [host]` |Trace route          |
-|`nslookup [host]`|DNS lookup           |
-|`arp`            |ARP table            |
-|`net user`       |System users         |
+| Command | Description |
+|---------|-------------|
+| `ping [host]` | Ping a host |
+| `ipconfig` | Network configuration |
+| `netstat` | Active connections |
+| `tracert [host]` | Trace route |
+| `nslookup [host]` | DNS lookup |
+| `arp` | ARP table |
+| `net user` | System users |
 
 </details>
 
 <details>
 <summary><b>🎨 Terminal</b></summary>
 
-|Command        |Description                    |
-|---------------|-------------------------------|
-|`cls`          |Clear the screen               |
-|`echo [text]`  |Print text                     |
-|`color [code]` |Change colors (e.g. `color 0A`)|
-|`title [text]` |Set window title               |
-|`prompt [text]`|Change prompt string           |
-|`help`         |List all commands              |
-|`exit`         |Close terminal                 |
+| Command | Description |
+|---------|-------------|
+| `cls` | Clear the screen |
+| `echo [text]` | Print text |
+| `color [code]` | Change colors (e.g. `color 0A`) |
+| `title [text]` | Set window title |
+| `prompt [text]` | Change prompt string |
+| `help` | List all commands |
+| `exit` | Close terminal |
 
 </details>
 
------
+---
 
 ## 🎨 Color Command
 
@@ -139,7 +143,7 @@ Format: `color [background][text]` — each character from `0` to `F`
 
 Example: `color 0A` — green text on black background (Matrix style 🟩)
 
------
+---
 
 ## 📁 Project Structure
 
@@ -153,7 +157,7 @@ cmd-simulator/
 └── .gitignore       # Git ignore rules
 ```
 
------
+---
 
 ## 🛠️ Tech Stack
 
@@ -164,42 +168,41 @@ Built intentionally **without any frameworks or dependencies** — pure HTML, CS
 - 🔒 No external requests
 - 💡 Easy to read and modify
 
------
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here’s how:
+Contributions are welcome! Here's how:
 
 1. **Fork** the repository
-1. Create a branch: `git checkout -b feature/new-command`
-1. Commit your changes: `git commit -m 'Add some command'`
-1. Push to the branch: `git push origin feature/new-command`
-1. Open a **Pull Request**
+2. Create a branch: `git checkout -b feature/new-command`
+3. Commit your changes: `git commit -m 'Add some command'`
+4. Push to the branch: `git push origin feature/new-command`
+5. Open a **Pull Request**
 
 ### Ideas for improvement
-
 - [ ] `edit` command — file editor inside the terminal
 - [ ] Full `find` command syntax
 - [ ] Batch file `.bat` support
 - [ ] Mobile keyboard support
 - [ ] Custom themes
 
------
+---
 
 ## 📋 Changelog
 
 See [CHANGELOG](CHANGELOG.md) for version history.
 
------
+---
 
 ## 📄 License
 
-Distributed under the **MIT License**. See <LICENSE> for details.
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
------
+---
 
 <div align="center">
 
-Made with ❤️ by [ProWin Team](https://github.com/prowindows4554-offical) | Give a ⭐ if you like it!
+Made with ❤️ by [prowindows4554](https://github.com/prowindows4554-offical) | Give a ⭐ if you like it!
 
 </div>
