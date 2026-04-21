@@ -1,6 +1,6 @@
 <div align="center">
 
-🌐 Тіл: [English](https://github.com/prowindows4554-offical/cmd-simulator?tab=readme-ov-file)  · [Français](README.fr.md) · [Português](README.pt.md) · **Қазақша** · [Русский](README.ru.md)
+🌐 Тіл: [English](https://github.com/prowindows4554-offical/cmd-simulator?tab=readme-ov-file) · [Français](README.fr.md) · [Português](README.pt.md) · **Қазақша** · [Русский](README.ru.md)
 
 # 💻 Windows CMD Симуляторы
 
@@ -12,7 +12,7 @@
 
 **Браузерде тікелей жұмыс істейтін Windows командалық жолының (cmd.exe) шынайы симуляторы**
 
-[🚀 Тікелей демо](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Қате туралы хабарлау](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [✨ Мүмкіндік ұсыну](https://github.com/prowindows4554-offical/cmd-simulator/issues)
+[🚀 Тікелей демо](https://prowindows4554-offical.github.io/cmd-simulator) · [🐛 Қате туралы хабарлау](https://github.com/prowindows4554-offical/cmd-simulator/issues) · [💬 Талқылаулар](https://github.com/prowindows4554-offical/cmd-simulator/discussions)
 
 </div>
 
@@ -27,6 +27,13 @@
 - 🔤 **Tab автотолтыру** — нақты терминал сияқты
 - 🎨 **`color` командасы** — фон мен мәтін түсін өзгерту (16 нұсқа)
 - 🪟 **Терезе басқару** — жылжыту, үлкейту, кішірейту, жабу
+- 📝 **Блокнот** — сақтау, жүктеу, іздеу және пернелер тіркесімімен толық Notepad
+- 📥 **`download` командасы** — файл немесе қалтаны (ZIP ретінде) жүктеп алу
+- 📤 **`upload` командасы** — нақты файлдарды виртуалды файл жүйесіне импорттау
+- 💾 **`mount` командасы** — файл немесе қалтаны виртуалды диск ретінде монтаждау
+- 🌐 **5 тіл** — English, Русский, Español, Français, 中文
+- 📱 **Мобильді нұсқа** — автоматты толық экран + пернетақта тулбары
+- ⛶ **Толық экран режимі** — Alt+Enter CMD-ді толық экранға ауыстырады
 - 📦 **Нөл тәуелділік** — бір файл, кітапхана қажет емес
 
 -----
@@ -176,6 +183,6 @@ cmd-simulator/
 
 <div align="center">
 
-[ProWin Team](https://github.com/prowindows4554-offical) ❤️ жасады | Ұнаса ⭐ қойыңыз!
+[prowindows4554](https://github.com/prowindows4554-offical) ❤️ жасады | Ұнаса ⭐ қойыңыз!
 
 </div>
