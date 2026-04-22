@@ -342,47 +342,101 @@ width: 100vw !important;
 height: 100vh !important;
 border: none !important;
 z-index: 100 !important;
-}
-
-/* ── Mobile toolbar ── */
-.mobile-toolbar {
-display: none;
-background: #1a1a1a;
-border-top: 1px solid #333;
-padding: 4px 6px;
-gap: 4px;
-flex-wrap: wrap;
-flex-shrink: 0;
-}
-
-@media (max-width: 768px), (pointer: coarse) {
-.mobile-toolbar { display: flex; }
-.window {
-width: 100vw !important;
-height: 100vh !important;
-position: fixed !important;
-top: 0 !important; left: 0 !important;
-border: none !important;
 resize: none !important;
 }
-#cmd-input { font-size: 16px; }
-.terminal { font-size: 13px; }
+
+/* ── Mobile toolbar — ABOVE input line ── */
+.mobile-toolbar {
+display: none;
+background: #111;
+border-bottom: 1px solid #333;
+padding: 3px 4px;
+gap: 3px;
+flex-wrap: nowrap;
+overflow-x: auto;
+flex-shrink: 0;
+order: -1; /* sits above terminal */
+-webkit-overflow-scrolling: touch;
+}
+
+/* On mobile: show toolbar, make window fullscreen, move toolbar above terminal */
+@media (max-width: 900px), (pointer: coarse) {
+.mobile-toolbar { display: flex; }
+
+```
+/* CMD window always fills screen on mobile — no floating window */
+.window {
+  width: 100vw !important;
+  height: 100% !important;
+  position: fixed !important;
+  top: 0 !important; left: 0 !important;
+  border: none !important;
+  resize: none !important;
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Disable drag on mobile */
+.titlebar { cursor: default !important; }
+
+/* Bigger font for touch */
+#cmd-input { font-size: 16px !important; }
+.terminal { font-size: 13px !important; }
+.output-line { font-size: 13px !important; }
+
+/* Bigger menu items for touch */
+.menu-item { padding: 4px 10px !important; font-size: 12px !important; }
+.dropdown-item { padding: 10px 20px 10px 16px !important; font-size: 13px !important; }
+.dropdown { min-width: 220px !important; }
+
+/* Notepad fullscreen on mobile */
+.notepad-window {
+  width: 100vw !important;
+  height: 100vh !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  position: fixed !important;
+  resize: none !important;
+  border: none !important;
+}
+.notepad-mobile-toolbar { display: flex !important; }
+/* Hide status bar on mobile to save space */
+.notepad-statusbar { display: none !important; }
+/* Bigger notepad tap targets */
+.np-item { padding: 10px 16px !important; font-size: 13px !important; }
+.np-menu { padding: 4px 10px !important; font-size: 13px !important; }
+.np-shortcut { display: none !important; }
+
+/* About window mobile */
+.about-window {
+  width: 94vw !important;
+  left: 3vw !important;
+  transform: translateY(-50%) !important;
+}
+```
+
 }
 
 .mob-btn {
-background: #2d2d2d;
-border: 1px solid #555;
+background: #2a2a2a;
+border: 1px solid #444;
 color: #c0c0c0;
-font-size: 11px;
+font-size: 12px;
 font-family: ‘Segoe UI’, sans-serif;
-padding: 4px 8px;
+padding: 6px 10px;
 cursor: pointer;
-border-radius: 2px;
+border-radius: 3px;
 user-select: none;
 white-space: nowrap;
+flex-shrink: 0;
+min-width: 36px;
+text-align: center;
+-webkit-tap-highlight-color: transparent;
 }
-.mob-btn:active { background: #0078d7; color: #fff; }
-.mob-btn.active { background: #0078d7; color: #fff; }
+.mob-btn:active { background: #0078d7; color: #fff; border-color: #0078d7; }
+.mob-btn.mod-active { background: #0078d7; color: #fff; border-color: #005a9e; }
 
 /* ── Notepad window ── */
 .notepad-overlay {
@@ -744,17 +798,7 @@ user-select: none;
     </div>
   </div>
 
-  <div class="terminal" id="terminal" onclick="focusInput()">
-    <div id="output"></div>
-    <div class="input-line" id="input-line">
-      <span class="prompt" id="prompt">C:\Users\User&gt;</span>
-      <div class="input-area">
-        <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" />
-      </div>
-    </div>
-  </div>
-
-  <!-- Mobile toolbar -->
+  <!-- Mobile toolbar — sits ABOVE terminal/input -->
 
   <div class="mobile-toolbar" id="mobile-toolbar">
     <button class="mob-btn" id="mob-ctrl" onclick="mobToggle('ctrl')">Ctrl</button>
@@ -768,7 +812,18 @@ user-select: none;
     <button class="mob-btn" onclick="mobSendKey('ArrowRight')">→</button>
     <button class="mob-btn" onclick="mobSendKey('Enter')">↵</button>
     <button class="mob-btn" onclick="mobSendKey('Backspace')">⌫</button>
-    <button class="mob-btn" onclick="output.innerHTML=''">CLS</button>
+    <button class="mob-btn" onclick="output.innerHTML=''; focusInput()">CLS</button>
+    <button class="mob-btn" onclick="toggleCmdFullscreen()">⛶</button>
+  </div>
+
+  <div class="terminal" id="terminal" onclick="focusInput()">
+    <div id="output"></div>
+    <div class="input-line" id="input-line">
+      <span class="prompt" id="prompt">C:\Users\User&gt;</span>
+      <div class="input-area">
+        <input type="text" id="cmd-input" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" />
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1736,27 +1791,6 @@ function toggleMaximize() {
   }
 }
 
-// Drag window
-let dragging = false, dragOffX = 0, dragOffY = 0;
-titlebar.addEventListener('mousedown', e => {
-  if (isMaximized) return;
-  dragging = true;
-  const rect = win.getBoundingClientRect();
-  dragOffX = e.clientX - rect.left;
-  dragOffY = e.clientY - rect.top;
-  win.style.position = 'fixed';
-  document.body.style.userSelect = 'none';
-});
-document.addEventListener('mousemove', e => {
-  if (!dragging) return;
-  win.style.left = (e.clientX - dragOffX) + 'px';
-  win.style.top = (e.clientY - dragOffY) + 'px';
-});
-document.addEventListener('mouseup', () => {
-  dragging = false;
-  document.body.style.userSelect = '';
-});
-
 // Menu functions
 function toggleMenu(id) {
   const items = document.querySelectorAll('.menu-item');
@@ -2089,12 +2123,35 @@ function toggleCmdFullscreen() {
   focusInput();
 }
 
-// ── Auto fullscreen on load ───────────────────────────────────
+// ── Auto fullscreen on load — desktop only ───────────────────
 window.addEventListener('load', function() {
-  // Small delay to ensure page renders first
-  setTimeout(function() {
-    toggleCmdFullscreen();
-  }, 100);
+  const isMobile = window.matchMedia('(max-width: 900px)').matches ||
+                   window.matchMedia('(pointer: coarse)').matches;
+  if (!isMobile) {
+    setTimeout(function() { toggleCmdFullscreen(); }, 100);
+  }
+});
+
+// ── Drag window — desktop only ────────────────────────────────
+let dragging = false, dragOffX = 0, dragOffY = 0;
+titlebar.addEventListener('mousedown', e => {
+  const isMobile = window.matchMedia('(pointer: coarse)').matches;
+  if (isMaximized || cmdFullscreen || isMobile) return;
+  dragging = true;
+  const rect = win.getBoundingClientRect();
+  dragOffX = e.clientX - rect.left;
+  dragOffY = e.clientY - rect.top;
+  win.style.position = 'fixed';
+  document.body.style.userSelect = 'none';
+});
+document.addEventListener('mousemove', e => {
+  if (!dragging) return;
+  win.style.left = (e.clientX - dragOffX) + 'px';
+  win.style.top = (e.clientY - dragOffY) + 'px';
+});
+document.addEventListener('mouseup', () => {
+  dragging = false;
+  document.body.style.userSelect = '';
 });
 
 // ── Mobile toolbar ────────────────────────────────────────────
@@ -2102,7 +2159,7 @@ let mobModifiers = { ctrl: false, alt: false, shift: false };
 
 function mobToggle(mod) {
   mobModifiers[mod] = !mobModifiers[mod];
-  document.getElementById('mob-' + mod).classList.toggle('active', mobModifiers[mod]);
+  document.getElementById('mob-' + mod).classList.toggle('mod-active', mobModifiers[mod]);
 }
 
 function mobSendKey(key) {
@@ -2112,14 +2169,14 @@ function mobSendKey(key) {
     const event = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true });
     cmdInput.dispatchEvent(event);
     mobModifiers = { ctrl: false, alt: false, shift: false };
-    document.querySelectorAll('.mob-btn.active').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.mob-btn.mod-active').forEach(b => b.classList.remove('active'));
     return;
   }
   if (key === 'Backspace') {
     const val = cmdInput.value;
     cmdInput.value = val.slice(0, -1);
     mobModifiers = { ctrl: false, alt: false, shift: false };
-    document.querySelectorAll('.mob-btn.active').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.mob-btn.mod-active').forEach(b => b.classList.remove('active'));
     return;
   }
   const event = new KeyboardEvent('keydown', {
@@ -2131,7 +2188,7 @@ function mobSendKey(key) {
   });
   cmdInput.dispatchEvent(event);
   mobModifiers = { ctrl: false, alt: false, shift: false };
-  document.querySelectorAll('.mob-btn.active').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.mob-btn.mod-active').forEach(b => b.classList.remove('active'));
 }
 
 // ── Notepad ───────────────────────────────────────────────────
