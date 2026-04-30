@@ -603,9 +603,6 @@ user-select: none;
 
 </head>
 <body>
-  <meta http-equiv="refresh" content="0; url=https://prowindows4554-offical.github.io/cmdsimu-fix/">
-
-
 <div class="window" id="window">
   <div class="titlebar" id="titlebar">
     <div class="titlebar-left">
@@ -2723,22 +2720,27 @@ init();
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #000;
-  border-bottom: 1px solid #333;
+  background: #1a1a1a;
   min-height: 50px;
   overflow: hidden;
+  pointer-events: auto;
 ">
   <script async="async" data-cfasync="false" src="https://pl29293873.profitablecpmratenetwork.com/119743b93239415c99202cf5c5070756/invoke.js"></script>
   <div id="container-119743b93239415c99202cf5c5070756"></div>
 </div>
 
-<!-- Push content down so ad doesn't overlap -->
-
 <style>
-  #ad-top-bar ~ .window,
-  body > .window { margin-top: 50px; }
+  /* Push window below ad banner */
+  .window {
+    margin-top: 50px !important;
+    height: calc(100vh - 50px) !important;
+  }
   @media (max-width: 900px), (pointer: coarse) {
-    body > .window { margin-top: 50px !important; top: 50px !important; height: calc(100vh - 50px) !important; }
+    .window {
+      top: 50px !important;
+      height: calc(100vh - 50px) !important;
+      margin-top: 0 !important;
+    }
   }
 </style>
 
