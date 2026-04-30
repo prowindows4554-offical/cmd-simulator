@@ -1,4 +1,4 @@
-.<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -603,10 +603,6 @@ user-select: none;
 
 </head>
 <body>
-  <!-- Adsterra Native Banner -->
-  <script async="async" data-cfasync="false" src="https://pl29293873.profitablecpmratenetwork.com/119743b93239415c99202cf5c5070756/invoke.js"></script>
-<div style="width: 100%; margin-bottom: 20px; display: block;" id="container-119743b93239415c99202cf5c5070756"></div>
-
 <div class="window" id="window">
   <div class="titlebar" id="titlebar">
     <div class="titlebar-left">
@@ -2711,10 +2707,37 @@ function cmdMount(args) {
 }
 
 init();
-
-
 </script>
 
+<!-- Adsterra banner — fixed top -->
+
+<div id="ad-top-bar" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+  border-bottom: 1px solid #333;
+  min-height: 50px;
+  overflow: hidden;
+">
+  <script async="async" data-cfasync="false" src="https://pl29293873.profitablecpmratenetwork.com/119743b93239415c99202cf5c5070756/invoke.js"></script>
+  <div id="container-119743b93239415c99202cf5c5070756"></div>
+</div>
+
+<!-- Push content down so ad doesn't overlap -->
+
+<style>
+  #ad-top-bar ~ .window,
+  body > .window { margin-top: 50px; }
+  @media (max-width: 900px), (pointer: coarse) {
+    body > .window { margin-top: 50px !important; top: 50px !important; height: calc(100vh - 50px) !important; }
+  }
+</style>
 
 </body>
 </html>
